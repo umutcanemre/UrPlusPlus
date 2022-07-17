@@ -114,6 +114,8 @@ istream& operator>>(istream& in, Board& b) {
                 case 'W':
                     xPos--;
                     break;
+                default:
+                    throw BoardParseException{};
             }
             // path takes out of bounds
             if (xPos >= width || xPos < 0 ||
