@@ -5,10 +5,8 @@
 #include "tile.h"
 #include "tilebasic.h"
 #include "tileblackhole.h"
-#include "tileend.h"
 #include "tilelucky.h"
 #include "tilerosette.h"
-#include "tilestart.h"
 #include "tiletornado.h"
 
 #include "tokenbasic.h"
@@ -55,14 +53,6 @@ istream& operator>>(istream& in, Board& b) {
         for (size_t j = 0; j < width; ++j) {
             in >> tileChar;
             switch (tileChar) {
-                case 'S':
-                    starts.emplace_back(i, j);
-                    b.gameMap[i].emplace_back(make_unique<TileStart>());
-                    break;
-                case 'E':
-                    ends.emplace_back(i, j);
-                    b.gameMap[i].emplace_back(make_unique<TileEnd>());
-                    break;
                 case 'O':
                     b.gameMap[i].emplace_back(make_unique<TileBasic>());
                     break;
@@ -86,79 +76,73 @@ istream& operator>>(istream& in, Board& b) {
         }
     }
 
-    // // did not provide exactly two starts and ends (maybe use global constant for
-    // // number of players permitted)
-    if (starts.size() != Board::playerCount || starts.size() != ends.size()) {
-        throw BoardParseException{};
-    }
-
 
     // // read in paths
+    size_t xPos, yPos;
 
-    // // store the actual coordinates of the paths, will be useful for validation later
+    // // store the actual coordinates of the paths, will be useful for token validation later
     vector<vector<pair<size_t, size_t>>> pathsCoords
         (Board::playerCount, vector<pair<size_t, size_t>>());
-
-    // // the first path we parse will be for the start tile that we
-    // // encountered first when reading the board in an English order
-    // // (left to right up to down)
-    pair<size_t, size_t> pathCoord = starts[0];
 
     string pathStr;
 
     for (size_t i = 0; i < Board::playerCount; ++i) {
-        b.paths.emplace_back();
+        in >> xPos >> yPos;
+        if (xPos >= width || xPos < 0 ||
+            yPos >= height || yPos < 0) {
+            throw BoardParseException{};
+        }
+
         // 0-initialize a 2d array
         vector<vector<int>> pathTracker(height, vector<int>(width));
+        // Mark start as visited
+        ++pathTracker[yPos][xPos];
 
         in >> pathStr;
 
         for (const auto &c : pathStr) {
             switch (c) {
                 case 'N':
-                    pathCoord.first -= 1;
+                    yPos--;
                     break;
                 case 'E':
-                    pathCoord.second += 1;
+                    xPos++;
                     break;
                 case 'S':
-                    pathCoord.first += 1;
+                    yPos++;
                     break;
                 case 'W':
-                    pathCoord.second -= 1;
+                    xPos--;
                     break;
             }
             // path takes out of bounds
-            if (pathCoord.second >= width || pathCoord.second < 0 ||
-                pathCoord.first >= height || pathCoord.first < 0) {
+            if (xPos >= width || xPos < 0 ||
+                yPos >= height || yPos < 0) {
                 throw BoardParseException{};
             }
-            // revisiting a start
-            if (find(starts.begin(), starts.end(), pathCoord) != ends.end()) {
-                throw BoardParseException{};
-            }
-
             // revisiting a tile
-            if (pathTracker[pathCoord.first][pathCoord.second] >= 1) {
+            if (pathTracker[yPos][xPos] >= 1) {
                 throw BoardParseException{};
             }
-            ++pathTracker[pathCoord.first][pathCoord.second];
+            ++pathTracker[yPos][xPos];
 
-            b.paths[i].emplace_back(b.gameMap[pathCoord.first][pathCoord.second].get());
-            pathsCoords[i].emplace_back(pathCoord);
+            b.paths[i].emplace_back(b.gameMap[yPos][xPos].get());
+            pathsCoords[i].emplace_back(make_pair(yPos, xPos));
         }
+    }
 
-        auto endIter = find(starts.begin(), starts.end(), pathCoord);
-
-        // path did not go to a valid end tile
-        if (endIter == ends.end()) {
-            throw BoardParseException{};
+    // Check for end tiles along other player path
+    for (size_t j = 0; j < Board::playerCount; ++j) {
+        for (size_t k = 0; k < Board::playerCount; ++k) {
+            if (j == k) {
+                continue;
+            }
+            if (find(b.paths[k].begin(), b.paths[k].end(), b.paths[j].back()) != b.paths[k].end()) {
+                // End tile found along other path; invalid board
+                // This implementation also enforces no shared end tile (intentional)
+                throw BoardParseException{};
+            }
         }
-
-        // remove the end we reached from ends so that we don't treat this
-        // end coordinate as a valid end again (any path that terminates at this end
-        // will be seen as not terminating at an end)
-        ends.erase(endIter);
     }
 
     // // read in token positions
