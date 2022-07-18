@@ -131,7 +131,7 @@ istream& operator>>(istream& in, Board& b) {
             ++pathTracker[yPos][xPos];
 
             b.paths[i].emplace_back(b.gameMap[yPos][xPos].get());
-            pathsCoords[i].emplace_back(make_pair(yPos, xPos));
+            pathsCoords[i].emplace_back(yPos, xPos);
         }
     }
 
