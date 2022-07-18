@@ -88,15 +88,16 @@ istream& operator>>(istream& in, Board& b) {
 
     for (size_t i = 0; i < Board::playerCount; ++i) {
         in >> xPos >> yPos;
-        if (xPos >= width || xPos < 0 ||
-            yPos >= height || yPos < 0) {
+        pair<size_t, size_t> pathCoord = make_pair(yPos, xPos);
+        if (pathCoord.second >= width || pathCoord.second < 0 ||
+            pathCoord.first >= height || pathCoord.first < 0) {
             throw BoardParseException{};
         }
 
         // 0-initialize a 2d array
         vector<vector<int>> pathTracker(height, vector<int>(width));
         // Mark start as visited
-        ++pathTracker[yPos][xPos];
+        ++pathTracker[pathCoord.first][pathCoord.second];
         
         b.paths.emplace_back();
 
@@ -105,33 +106,33 @@ istream& operator>>(istream& in, Board& b) {
         for (const auto &c : pathStr) {
             switch (c) {
                 case 'N':
-                    yPos--;
+                    pathCoord.first--;
                     break;
                 case 'E':
-                    xPos++;
+                    pathCoord.second++;
                     break;
                 case 'S':
-                    yPos++;
+                    pathCoord.first++;
                     break;
                 case 'W':
-                    xPos--;
+                    pathCoord.second--;
                     break;
                 default:
                     throw BoardParseException{};
             }
             // path takes out of bounds
-            if (xPos >= width || xPos < 0 ||
-                yPos >= height || yPos < 0) {
+            if (pathCoord.second >= width || pathCoord.second < 0 ||
+                pathCoord.first >= height || pathCoord.first < 0) {
                 throw BoardParseException{};
             }
             // revisiting a tile
-            if (pathTracker[yPos][xPos] >= 1) {
+            if (pathTracker[pathCoord.first][pathCoord.second] >= 1) {
                 throw BoardParseException{};
             }
-            ++pathTracker[yPos][xPos];
+            ++pathTracker[pathCoord.first][pathCoord.second];
 
-            b.paths[i].emplace_back(b.gameMap[yPos][xPos].get());
-            pathsCoords[i].emplace_back(yPos, xPos);
+            b.paths[i].emplace_back(b.gameMap[pathCoord.first][pathCoord.second].get());
+            pathsCoords[i].emplace_back(pathCoord);
         }
     }
 
