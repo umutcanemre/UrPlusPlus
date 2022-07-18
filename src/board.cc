@@ -97,6 +97,8 @@ istream& operator>>(istream& in, Board& b) {
         vector<vector<int>> pathTracker(height, vector<int>(width));
         // Mark start as visited
         ++pathTracker[yPos][xPos];
+        
+        b.paths.emplace_back();
 
         in >> pathStr;
 
