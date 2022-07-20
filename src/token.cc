@@ -1,4 +1,5 @@
 #include "token.h"
+#include <utility>
 
 // bool Token::activateCapture() {
 //     return captureAbility();
@@ -20,7 +21,15 @@ size_t Token::getTokenId() const {
 }
 
 Token::Token(size_t playerId, size_t id, size_t row, size_t col):
-    playerId{playerId}, id{id}, row{row}, col{col} {}
+    playerId{playerId}, id{id}, position{std::make_pair(row, col)} {}
+
+void Token::updatePosition(std::pair<size_t, size_t> newPos) {
+    position = newPos;
+}
+
+std::pair<size_t, size_t> Token::getPosition() {
+    return position;
+}
 
 Token::~Token() {}
 

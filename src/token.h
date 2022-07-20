@@ -8,7 +8,8 @@ class Tile;
 
 class Token {
     size_t pathIndex = 0;
-    size_t playerId, id, row, col;
+    size_t playerId, id;
+    std::pair<size_t, size_t> position;
 
     // virtual void setPathIndex();
     // NVI private methods
