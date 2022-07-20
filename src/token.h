@@ -19,8 +19,14 @@ class Token {
     // id getters
     size_t getPlayerId() const;
     size_t getTokenId() const;
-    // abilities
+
+    // Position get/set
+    void updatePosition(std::pair<size_t, size_t>);
+    std::pair<size_t, size_t> getPosition();
+    
+    // Abilities
     // void activatePassive(const std::vector<Tile*>& path);
+    
     // returns true if the player's turn ends
     // bool activateCapture();
     // Predicate for checking if move is valid from the perspective
