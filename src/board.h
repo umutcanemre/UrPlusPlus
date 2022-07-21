@@ -30,6 +30,9 @@ class Board {
     // const std::vector<std::vector<std::vector<Tile*>>>& getPlayersPaths();
 
     friend std::istream& operator>>(std::istream&, Board&);
+    
+    // Mainly for GameState makeMove; maybe fix? should be ok though
+    friend class GameState;
 };
 
 #endif

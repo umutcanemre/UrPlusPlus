@@ -10,15 +10,18 @@ class Token;
 class Tile;
 
 class GameState {
-    size_t playerTurn = 0;
-    int diceroll, flexdiceroll;
+    size_t playerTurn = 0; // ID of player next to act
+    size_t diceroll, flexdiceroll;
     std::unique_ptr<Board> board;
-    bool moveValid();
+    bool moveValid(size_t tokenId, size_t distance);
+  
   public:
-    const std::vector<std::vector<Tile*>>& getBoard() const;
-    void rollDice();
-    void movePiece(size_t tokenId, size_t distance);
     GameState();
+    bool rollDice();
+    bool movePiece(size_t tokenId, size_t distance);
+    
+    // Will be changed
+    const std::vector<std::vector<Tile*>>& getBoard() const;
 
     friend std::istream& operator>>(std::istream&, GameState&);
 };
