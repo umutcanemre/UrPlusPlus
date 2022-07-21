@@ -13,7 +13,7 @@ class Token {
     // e.g. 0 is off the board, 1 is on the first tile on the path
     std::pair<size_t, size_t> position;
     size_t pathProgress = 0;
-    bool isProtectedByTile = false;
+    bool isProtectedByToken = false;
 
     // virtual void setPathIndex();
     // NVI private methods
@@ -30,6 +30,7 @@ class Token {
 
     // Position get/set
     void updatePosition(std::pair<size_t, size_t>, const std::vector<Tile*>& );
+    void updatePosition(int, const std::vector<Tile*>& );
     std::pair<size_t, size_t> getPosition();
 
     // Abilities

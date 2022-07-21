@@ -24,10 +24,10 @@ std::pair<size_t, size_t> Token::getPosition() {
 }
 
 bool Token::getIsProtected() const {
-    return isProtectedByTile;
+    return isProtectedByToken;
 }
 void Token::setIsProtected(bool isProtected) {
-    isProtectedByTile = isProtected;
+    isProtectedByToken = isProtected;
 }
 
 
