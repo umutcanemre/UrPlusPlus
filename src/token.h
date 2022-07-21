@@ -23,19 +23,21 @@ class Token {
     // id getters
     size_t getPlayerId() const;
     size_t getTokenId() const;
+    size_t getPathProgress() const;
 
     // Position get/set
     void updatePosition(std::pair<size_t, size_t>);
     std::pair<size_t, size_t> getPosition();
 
     // Abilities
-    // void activatePassive(const std::vector<Tile*>& path);
-
-    // returns true if the player's turn ends
-    // bool activateCapture();
+    // activates the passive ability of the token (if any)
+    virtual void activatePassive(const std::vector<Tile*>& path);
+    // returns false if the player's turn ends - true if it has an 
+    // on-capture ability
+    virtual bool activateCapture();
     // Predicate for checking if move is valid from the perspective
-    // of the token
-    // bool isValidMove(int diceroll, int flexroll, int move) const;
+    // of the token - different depending on the token type
+    virtual bool isValidMove(int diceroll, int flexroll, int move) const;
     // visitor design pattern
     virtual void acceptVisitor(GameViewer&) const = 0;
     virtual ~Token() = 0;
