@@ -1,9 +1,14 @@
 #include "tokenassassin.h"
 #include "gameviewer.h"
 
+
+bool TokenAssassin::captureAbility() {
+    return true;
+}
+
 void TokenAssassin::acceptVisitor(GameViewer& g) const {
     g.visitTokenAssassin(*this);
-};
+}
 
 TokenAssassin::TokenAssassin(size_t playerId, size_t id,
     size_t row, size_t col, size_t pathProgress):
