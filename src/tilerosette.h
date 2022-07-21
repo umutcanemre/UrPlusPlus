@@ -3,6 +3,7 @@
 #include "tile.h"
 
 class TileRosette : public Tile {
+    bool specialCheck() override; 
   public:
     void acceptVisitor(GameViewer&) const override;
     TileRosette();

@@ -40,7 +40,7 @@ class Token {
     bool activateCapture();
     // Predicate for checking if move is valid from the perspective
     // of the token - different depending on the token type
-    bool isValidMove(int, int, int) const;
+    bool isValidMove(int diceRoll, int flexRoll, int move) const;
     // visitor design pattern
     virtual void acceptVisitor(GameViewer&) const = 0;
     virtual ~Token() = 0;
