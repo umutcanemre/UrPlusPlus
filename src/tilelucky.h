@@ -5,7 +5,7 @@
 class TileLucky : public Tile {
   public:
     void acceptVisitor(GameViewer&) const override;
-    TileLucky();
+    TileLucky(size_t row, size_t col);
 };
 
 #endif

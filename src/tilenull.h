@@ -5,7 +5,7 @@
 class TileNull : public Tile {
   public:
     void acceptVisitor(GameViewer&) const override;
-    TileNull();
+    TileNull(size_t row, size_t col);
 };
 
 #endif

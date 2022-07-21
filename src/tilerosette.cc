@@ -10,6 +10,6 @@ bool TileRosette::specialCheck() {
         return false;
     }
     return true;
-} 
+}
 
-TileRosette::TileRosette(): Tile{} {}
+TileRosette::TileRosette(size_t row, size_t col): Tile{row, col} {}

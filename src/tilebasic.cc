@@ -5,4 +5,4 @@ void TileBasic::acceptVisitor(GameViewer& g) const {
     g.visitTileBasic(*this);
 }
 
-TileBasic::TileBasic(): Tile{} {}
+TileBasic::TileBasic(size_t row, size_t col): Tile{row, col} {}

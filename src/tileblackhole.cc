@@ -5,4 +5,4 @@ void TileBlackHole::acceptVisitor(GameViewer& g) const {
     g.visitTileBlackHole(*this);
 }
 
-TileBlackHole::TileBlackHole(): Tile{} {}
+TileBlackHole::TileBlackHole(size_t row, size_t col): Tile{row, col} {}

@@ -23,11 +23,14 @@ class Board {
     std::vector<std::vector<Tile*>> nonOwningGameMap;
     std::vector<std::vector<Token*>> nonOwningTokens;
 
+    void initCachedNonOwningVectors();
+
   public:
     const static size_t playerCount = 2;
+
     const std::vector<std::vector<Tile*>>& getGameMap() const;
-    // const std::vector<std::vector<Token*>>& getPlayersTokens();
-    // const std::vector<std::vector<std::vector<Tile*>>>& getPlayersPaths();
+    const std::vector<std::vector<Token*>>& getPlayersTokens() const;
+    const std::vector<std::vector<Tile*>>& getPlayersPaths() const;
 
     friend std::istream& operator>>(std::istream&, Board&);
     

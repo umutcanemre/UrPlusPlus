@@ -8,6 +8,7 @@
 #include "tilelucky.h"
 #include "tilerosette.h"
 #include "tiletornado.h"
+#include "tilenull.h"
 
 #include "tokenbasic.h"
 #include "tokenassassin.h"
@@ -21,8 +22,33 @@ char* BoardParseException::what() {
     return "Board parsing error";
 }
 
-const std::vector<std::vector<Tile*>>& Board::getGameMap() const {
+const vector<vector<Tile*>>& Board::getGameMap() const {
     return nonOwningGameMap;
+}
+
+const vector<vector<Token*>>& Board::getPlayersTokens() const {
+    return nonOwningTokens;
+}
+
+const vector<vector<Tile*>>& Board::getPlayersPaths() const {
+    return paths;
+}
+
+void Board::initCachedNonOwningVectors() {
+    for (const auto &row : gameMap) {
+        vector<Tile*> temp;
+        for (const auto &tilePtr : row) {
+            temp.emplace_back(tilePtr.get());
+        }
+        nonOwningGameMap.emplace_back(temp);
+    }
+    for (const auto &player : playersTokens) {
+        vector<Token*> temp;
+        for (const auto &tokenPtr : player) {
+            temp.emplace_back(tokenPtr.get());
+        }
+        nonOwningTokens.emplace_back(temp);
+    }
 }
 
 void Board::reset() {
@@ -38,72 +64,89 @@ istream& operator>>(istream& in, Board& b) {
     // read game map
     size_t width, height;
 
-    in >> width >> height;
+    in >> height >> width;
 
     char tileChar;
 
-    // (row, col) pairs for starts and ends
-    vector<pair<size_t,size_t>> starts;
-    vector<pair<size_t,size_t>> ends;
-
+    vector<vector<bool>> unlandableTiles(height, vector<bool>(width, false));
 
     for (size_t i = 0; i < height; ++i) {
         b.gameMap.emplace_back();
-        b.nonOwningGameMap.emplace_back();
         for (size_t j = 0; j < width; ++j) {
             in >> tileChar;
             switch (tileChar) {
                 case 'O':
-                    b.gameMap[i].emplace_back(make_unique<TileBasic>());
+                    b.gameMap[i].emplace_back(make_unique<TileBasic>(i, j));
                     break;
                 case 'B':
-                    b.gameMap[i].emplace_back(make_unique<TileBlackHole>());
+                    b.gameMap[i].emplace_back(make_unique<TileBlackHole>(i, j));
                     break;
                 case 'L':
-                    b.gameMap[i].emplace_back(make_unique<TileLucky>());
+                    b.gameMap[i].emplace_back(make_unique<TileLucky>(i, j));
                     break;
                 case 'T':
-                    b.gameMap[i].emplace_back(make_unique<TileTornado>());
+                    b.gameMap[i].emplace_back(make_unique<TileTornado>(i, j));
+                    break;
+                case 'X':
+                    b.gameMap[i].emplace_back(make_unique<TileNull>(i, j));
+                    unlandableTiles[i][j] = true;
                     break;
                 case '*':
-                    b.gameMap[i].emplace_back(make_unique<TileRosette>());
+                    b.gameMap[i].emplace_back(make_unique<TileRosette>(i, j));
                     break;
                 default:
                     throw BoardParseException{};
                     break;
-                b.nonOwningGameMap[i].emplace_back(b.gameMap[i][j].get());
             }
         }
     }
 
+    // read in paths
 
-    // // read in paths
-    size_t xPos, yPos;
-
-    // // store the actual coordinates of the paths, will be useful for token validation later
+    // store the actual coordinates of the paths,
+    // will be useful for token validation later
     vector<vector<pair<size_t, size_t>>> pathsCoords
         (Board::playerCount, vector<pair<size_t, size_t>>());
 
+    // read in the paths for each player
     string pathStr;
-
+    pair<size_t, size_t> pathCoord;
     for (size_t i = 0; i < Board::playerCount; ++i) {
-        in >> xPos >> yPos;
-        pair<size_t, size_t> pathCoord = make_pair(yPos, xPos);
+        b.paths.emplace_back();
+        // 0-initialize a 2d array to track the path
+        vector<vector<bool>> pathTracker(height, vector<bool>(width));
+
+        // read in first tile of path (row, col)
+        in >> pathCoord.first >> pathCoord.second;
+
+        // out of bounds start
         if (pathCoord.second >= width || pathCoord.second < 0 ||
             pathCoord.first >= height || pathCoord.first < 0) {
             throw BoardParseException{};
         }
+        // starting on unlandable tile (nulltile or start/end of previous path)
+        if (unlandableTiles[pathCoord.first][pathCoord.second]) {
+            throw BoardParseException{};
+        }
 
-        // 0-initialize a 2d array
-        vector<vector<int>> pathTracker(height, vector<int>(width));
+        // other paths (and this one)
+        // should not land on the start tile of this path later
+        unlandableTiles[pathCoord.first][pathCoord.second] = true;
+
         // Mark start as visited
-        ++pathTracker[pathCoord.first][pathCoord.second];
-        
-        b.paths.emplace_back();
+        pathTracker[pathCoord.first][pathCoord.second] = true;
+
+        // add start token to the path
+        b.paths[i].emplace_back(
+            b.gameMap[pathCoord.first][pathCoord.second].get());
+        pathsCoords[i].emplace_back(pathCoord);
 
         in >> pathStr;
 
+        // cout << "(" << pathCoord.first << ", " << pathCoord.second << ")";
+
         for (const auto &c : pathStr) {
+            // move the current position of the path in the specified direction
             switch (c) {
                 case 'N':
                     pathCoord.first--;
@@ -125,93 +168,115 @@ istream& operator>>(istream& in, Board& b) {
                 pathCoord.first >= height || pathCoord.first < 0) {
                 throw BoardParseException{};
             }
-            // revisiting a tile
-            if (pathTracker[pathCoord.first][pathCoord.second] >= 1) {
+            // revisiting a tile in this path
+            if (pathTracker[pathCoord.first][pathCoord.second]) {
                 throw BoardParseException{};
             }
-            ++pathTracker[pathCoord.first][pathCoord.second];
+            // landing on unlandable tile (nulltile or start/end of previous path)
+            if (unlandableTiles[pathCoord.first][pathCoord.second]) {
+                throw BoardParseException{};
+            }
+            pathTracker[pathCoord.first][pathCoord.second] = true;
 
-            b.paths[i].emplace_back(b.gameMap[pathCoord.first][pathCoord.second].get());
+            // add visited token to the path
+            b.paths[i].emplace_back(
+                b.gameMap[pathCoord.first][pathCoord.second].get());
             pathsCoords[i].emplace_back(pathCoord);
+            // cout << "(" << pathCoord.first << ", " << pathCoord.second << ")";
         }
+
+        // cout << endl;
     }
 
-    // Check for end tiles along other player path
-    for (size_t j = 0; j < Board::playerCount; ++j) {
-        for (size_t k = 0; k < Board::playerCount; ++k) {
-            if (j == k) {
-                continue;
-            }
-            if (find(b.paths[k].begin(), b.paths[k].end(), b.paths[j].back()) != b.paths[k].end()) {
-                // End tile found along other path; invalid board
-                // This implementation also enforces no shared end tile (intentional)
-                throw BoardParseException{};
-            }
-        }
-    }
-
-    // // read in token positions
-
-    // // b.playersTokens = vector<vector<unique_ptr<Token>>>(Board::playerCount, vector<unique_ptr<Token>>());
+    // read in token positions
 
     size_t tokenCount;
 
+    // read number of tokens to expect for each player
     in >> tokenCount;
     char tokenTypeChar;
-    pair<size_t, size_t> tokenCoord;
+    size_t abilityUses;
+    pair<size_t, size_t> tCoord;
+    int row, col;
 
-    // // again, whichever player corresponds to the first start tile we read in
-    // // will be the first player we read tokens for
+    // again, whichever player corresponds to the first start tile we read in
+    // will be the first player we read tokens for
 
     for (size_t i = 0; i < Board::playerCount; ++i) {
         b.playersTokens.emplace_back();
-        b.nonOwningTokens.emplace_back();
         // tokens are id'd based on the order they appear
         // [token type char] [token row] [token col]
         for (size_t j = 0; j < tokenCount; ++j) {
-            in >> tokenTypeChar >> tokenCoord.first >> tokenCoord.second;
+            in >> tokenTypeChar >> row >> col;
 
-            // if the token's position is not on the player's path we have error
-            if (find(pathsCoords[i].begin(), pathsCoords[i].end(), tokenCoord)
-                == pathsCoords[i].end()) {
+            size_t pathDist;
+            tCoord.first = static_cast<size_t>(row);
+            tCoord.second = static_cast<size_t>(col);
+
+            // special input for off board
+            if (row == -1 && col == -1) {
+                pathDist = 0;
+            }
+            else if (row < 0 || col < 0) {
                 throw BoardParseException();
             }
-
+            else {
+                auto tileIter = find(pathsCoords[i].begin(), pathsCoords[i].end(), tCoord);
+                // if the token position is not on the player's path we have error
+                if (tileIter == pathsCoords[i].end()) {
+                    throw BoardParseException();
+                }
+                pathDist = distance(pathsCoords[i].begin(), tileIter) + 1;
+            }
             switch (tokenTypeChar) {
                 case 'A':
                     b.playersTokens[i].emplace_back
                         (make_unique<TokenAssassin>
-                            (i, j, tokenCoord.first, tokenCoord.second));
+                            (i, j, tCoord.first, tCoord.second, pathDist));
                     break;
                 case 'B':
                     b.playersTokens[i].emplace_back
                         (make_unique<TokenBasic>
-                            (i, j, tokenCoord.first, tokenCoord.second));
+                            (i, j, tCoord.first, tCoord.second, pathDist));
                     break;
                 case 'F':
                     b.playersTokens[i].emplace_back
                         (make_unique<TokenFlexible>
-                            (i, j, tokenCoord.first, tokenCoord.second));
+                            (i, j, tCoord.first, tCoord.second, pathDist));
                     break;
                 case 'S':
+                    // read additional parameter for number of uses on ability
+                    in >> abilityUses;
+
                     b.playersTokens[i].emplace_back
                         (make_unique<TokenSpeedster>
-                            (i, j, tokenCoord.first, tokenCoord.second));
+                            (i, j, tCoord.first, tCoord.second, pathDist,
+                            abilityUses));
                     break;
                 case 'G':
                     b.playersTokens[i].emplace_back
                         (make_unique<TokenSupporter>
-                            (i, j, tokenCoord.first, tokenCoord.second));
+                            (i, j, tCoord.first, tCoord.second, pathDist));
                     break;
                 // invalid token type
                 default:
                     throw BoardParseException{};
                     break;
-                b.nonOwningTokens[i].emplace_back(b.playersTokens[i][j].get());
+            }
+
+            // set occupant of tile
+            if (pathDist > 0) {
+                Tile& tile = *b.gameMap[tCoord.first][tCoord.second];
+                // token already on this tile
+                if (tile.getOccupant()) {
+                    throw BoardParseException{};
+                }
+                tile.setOccupant(b.playersTokens[i][j].get());
             }
         }
     }
+
+    b.initCachedNonOwningVectors();
+
     return in;
 }
-
-

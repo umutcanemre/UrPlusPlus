@@ -5,7 +5,7 @@
 class TileTornado : public Tile {
   public:
     void acceptVisitor(GameViewer&) const override;
-    TileTornado();
+    TileTornado(size_t row, size_t col);
 };
 
 #endif
