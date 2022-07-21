@@ -17,6 +17,11 @@ bool Token::isValidMove(int diceroll, int flexroll, int move) const {
 void Token::activatePassive(const std::vector<Tile*>& path) {
     passiveAbility(path);
 }
+void Token::updatePosition(std::pair<size_t, size_t> newPos, size_t distanceTraveled); {
+    // precondition: newPos and distanceTraveled are valid
+    pathProgress = pathProgress + distanceTraveled;
+    position = newPos;
+}
 
 
 size_t Token::getPlayerId() const {
