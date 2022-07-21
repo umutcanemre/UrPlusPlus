@@ -32,7 +32,6 @@ char CLIView::getTokenChar(const Token& t) {
 void CLIView::drawBoard(const std::vector<std::vector<Tile*>> &gameboard) {
     for (const auto &row : gameboard) {
         for (const auto &t : row) {
-            // (*out) << "test" << std::endl;
             if (!t->getOccupant()) {
                 t->acceptVisitor(*this);
             }
