@@ -137,10 +137,15 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
     Tile* oldTile = (oldIndex == 0) ? nullptr : board->paths.at(playerTurn).at(oldIndex - 1);
     bool captureTurnRepeat  = false;
     bool tileTurnRepeat = false;
+
+    // Clear old tile
+    if (oldTile != nullptr) {
+        oldTile->setOccupant(nullptr);
+    }
+
     if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
-        if (oldTile != nullptr) {
-            oldTile->setOccupant(nullptr);
-        }
+        // Reached end- no need to check for capture,
+        // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
     } else {
         Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance - 1);
@@ -150,18 +155,14 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
             // We need to send the enemy token to the start.
             Token* killedToken = newTile->getOccupant();
             killedToken->updatePosition(std::make_pair(0, 0), 0);
-            // assassin changes to true; so we stay on turn
+            // Assassin changes to true; so we repeat turn
             captureTurnRepeat = movingToken->activateCapture();
         }
 
-        // update tile occupants
-        if (oldTile != nullptr) {
-            oldTile->setOccupant(nullptr);
-        }
-
+        // Update new tile
         newTile->setOccupant(movingToken);
 
-        // update position stored in token
+        // Update position stored in token
         movingToken->updatePosition(newTile->getPosition(), movingToken->getPathProgress() + distance);
 
         // Activates tile ability; returns true if additional turn gained
