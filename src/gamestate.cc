@@ -38,7 +38,7 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
         return false;
     }
     size_t newIndex = movingToken->getPathProgress() + distance - 1;
-    if (board->paths.at(playerTurn).size() <= newIndex) {
+    if (board->paths.at(playerTurn).size() < newIndex) {
         // Out of bounds move
         return false;
     }
@@ -50,27 +50,32 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
 }
 
 bool GameState::movePiece(size_t tokenId, size_t distance) {
-    if (moveValid(tokenId, distance)) {
-        Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
-        size_t oldIndex = movingToken->getPathProgress() - 1; 
-        Tile* oldTile = board->paths.at(playerTurn).at(oldIndex);
-        Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance);
-        if (newTile->getOccupant() != nullptr) {
-            // At this point, we are guaranteed this is an enemy token
-            // that is capturable.
-            // We need to send the enemy token to the start.
-            Token* killedToken = newTile->getOccupant();
-            killedToken->updatePosition(std::make_pair(0, 0), 0);
-        }
-
-        // update tile occupants
-        oldTile->setOccupant(nullptr);
-        newTile->setOccupant(movingToken);
-
-        // update position stored in token
-        movingToken->updatePosition(newTile->getPosition(), movingToken->getPathProgress() + distance);
-        return true;
-    } else {
+    if (!moveValid(tokenId, distance)) {
         return false;
     }
+    Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
+    size_t oldIndex = movingToken->getPathProgress() - 1; 
+    Tile* oldTile = board->paths.at(playerTurn).at(oldIndex);
+    if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
+        // We are moving into the end
+        oldTile->setOccupant(nullptr);
+        movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
+        return true;
+    } 
+    Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance);
+    if (newTile->getOccupant() != nullptr) {
+        // At this point, we are guaranteed this is an enemy token
+        // that is capturable.
+        // We need to send the enemy token to the start.
+        Token* killedToken = newTile->getOccupant();
+        killedToken->updatePosition(std::make_pair(0, 0), 0);
+    }
+
+    // update tile occupants
+    oldTile->setOccupant(nullptr);
+    newTile->setOccupant(movingToken);
+
+    // update position stored in token
+    movingToken->updatePosition(newTile->getPosition(), movingToken->getPathProgress() + distance);
+    return true;
 }
