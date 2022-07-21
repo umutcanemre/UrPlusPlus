@@ -135,13 +135,12 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
     Token* movingToken = playerTokens.at(tokenId).get();
     size_t oldIndex = movingToken->getPathProgress();
     Tile* oldTile = (oldIndex == 0) ? nullptr : board->paths.at(playerTurn).at(oldIndex - 1);
-    bool captureAbility = false;
-    bool tileAbility = false;
+    bool captureTurnRepeat  = false;
+    bool tileTurnRepeat = false;
     if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
-        // We are moving into the end
-        // Causes issues in edge case for really small boards
-        // Can add check; or impose restriction board length is at least 4
-        oldTile->setOccupant(nullptr);
+        if (oldTile != nullptr) {
+            oldTile->setOccupant(nullptr);
+        }
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
     } else {
         Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance - 1);
@@ -152,7 +151,7 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
             Token* killedToken = newTile->getOccupant();
             killedToken->updatePosition(std::make_pair(0, 0), 0);
             // assassin changes to true; so we stay on turn
-            captureAbility = movingToken->activateCapture();
+            captureTurnRepeat = movingToken->activateCapture();
         }
 
         // update tile occupants
@@ -166,7 +165,7 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         movingToken->updatePosition(newTile->getPosition(), movingToken->getPathProgress() + distance);
 
         // Activates tile ability; returns true if additional turn gained
-        tileAbility = newTile->onMoveSuccess(movingToken, board->paths.at(playerTurn));
+        tileTurnRepeat = newTile->onMoveSuccess(movingToken, board->paths.at(playerTurn));
     }
 
     // Tile/token ability updates/checks
@@ -179,7 +178,7 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         movingToken->activateManual();
     }
 
-    if (captureAbility || tileAbility) {
+    if (captureTurnRepeat  || tileTurnRepeat) {
         repeatPlayerTurn();
     } else {
         moveToNextPlayerTurn();
