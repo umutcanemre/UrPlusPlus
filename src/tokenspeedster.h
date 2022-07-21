@@ -4,7 +4,7 @@
 
 class TokenSpeedster : public Token {
   public:
-    TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col);
+    TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);
     void acceptVisitor(GameViewer&) const override;
     ~TokenSpeedster();
 

@@ -19,8 +19,8 @@ size_t Token::getTokenId() const {
     return id;
 }
 
-Token::Token(size_t playerId, size_t id, size_t row, size_t col):
-    playerId{playerId}, id{id}, position{std::make_pair(row, col)} {}
+Token::Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress):
+    playerId{playerId}, id{id}, position{row, col}, pathProgress{pathProgress} {}
 
 void Token::updatePosition(std::pair<size_t, size_t> newPos) {
     position = newPos;

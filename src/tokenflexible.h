@@ -4,7 +4,7 @@
 
 class TokenFlexible : public Token {
   public:
-    TokenFlexible(size_t playerId, size_t id, size_t row, size_t col);
+    TokenFlexible(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);
     void acceptVisitor(GameViewer&) const override;
     ~TokenFlexible();
 };
