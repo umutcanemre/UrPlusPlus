@@ -23,6 +23,13 @@ std::pair<size_t, size_t> Token::getPosition() {
     return position;
 }
 
+bool Token::getIsProtected() const {
+    return isProtectedByTile;
+}
+void Token::setIsProtected(bool isProtected) {
+    isProtectedByTile = isProtected;
+}
+
 
 Token::Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress):
     playerId{playerId}, id{id}, position{row, col}, pathProgress{pathProgress} {}
