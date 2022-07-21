@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++14 -Wall -g -MMD
-EXEC = a3q4
+EXEC = UrPlusPlus
 OBJECTS = board.o cliview.o gamestate.o gameviewer.o guiview.o main.o \
 	path.o tilebasic.o tileblackhole.o tile.o tilelucky.o \
 	tilenull.o tilerosette.o tiletornado.o tokenassassin.o \
