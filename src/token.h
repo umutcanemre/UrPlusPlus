@@ -16,7 +16,7 @@ class Token {
     bool isProtectedByToken = false;
 
     // NVI private methods
-    virtual void passiveAbility(const std::vector<Tile*>& path);
+    virtual void passiveAbility(std::vector<Tile*>& path);
     virtual bool checkValid(int diceroll, int flexroll, int move) const;
     virtual bool captureAbility();
   public:
@@ -28,13 +28,13 @@ class Token {
     void setIsProtected(bool);
 
     // Position get/set
-    void updatePosition(std::pair<size_t, size_t> newPos, size_t distanceTraveled);
+    void updatePosition(std::pair<size_t, size_t> newPos, size_t newPathProgress);
     void updatePosition(int, const std::vector<Tile*>& );
     std::pair<size_t, size_t> getPosition();
 
     // Abilities
     // activates the passive ability of the token (if any)
-    void activatePassive(const std::vector<Tile*>& );
+    void activatePassive(std::vector<Tile*>& );
     // returns false if the player's turn ends - true if it has an 
     // on-capture ability
     bool activateCapture();

@@ -1,6 +1,6 @@
 #include "token.h"
 
-void Token::passiveAbility(const std::vector<Tile*>& path) {}
+void Token::passiveAbility(std::vector<Tile*>& path) {}
 bool Token::checkValid(int diceroll, int flexroll, int move) const {
     return move == diceroll;
 }
@@ -17,9 +17,9 @@ bool Token::isValidMove(int diceroll, int flexroll, int move) const {
 void Token::activatePassive(const std::vector<Tile*>& path) {
     passiveAbility(path);
 }
-void Token::updatePosition(std::pair<size_t, size_t> newPos, size_t distanceTraveled); {
+void Token::updatePosition(std::pair<size_t, size_t> newPos, size_t newPathProgress); {
     // precondition: newPos and distanceTraveled are valid
-    pathProgress = pathProgress + distanceTraveled;
+    pathProgress = newPathProgress;
     position = newPos;
 }
 
