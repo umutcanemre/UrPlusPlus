@@ -1,13 +1,22 @@
 #include "token.h"
 
-bool Token::activateCapture() {
-    return false;
-}
-bool Token::isValidMove(int diceroll, int flexroll, int move) const {
+void Token::passiveAbility(const std::vector<Tile*>& path) {}
+bool Token::checkValid(int diceroll, int flexroll, int move) const {
     return move == diceroll;
 }
+bool Token::captureAbility() {
+    return false;
+}
 
-void Token::activatePassive(const std::vector<Tile*>& path) {}
+bool Token::activateCapture() {
+    return captureAbility();
+}
+bool Token::isValidMove(int diceroll, int flexroll, int move) const {
+    return checkValid(diceroll, flexroll, move);
+}
+void Token::activatePassive(const std::vector<Tile*>& path) {
+    passiveAbility(path);
+}
 
 
 size_t Token::getPlayerId() const {
