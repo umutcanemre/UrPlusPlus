@@ -1,11 +1,18 @@
 #include "token.h"
 
-void Token::passiveAbility(std::vector<Tile*>& path) {}
+void Token::passiveAbility(std::vector<Tile*>& path) { }
 bool Token::checkValid(int diceroll, int flexroll, int move) const {
     return move == diceroll;
 }
 bool Token::captureAbility() {
     return false;
+}
+void Token::manualAbility() {
+}
+bool Token::isAvailable() const {
+    // by default it returns true (non-limited ability)
+    // possibly overridden if an ability of some child class is limited
+    return true;
 }
 
 bool Token::activateCapture() {
@@ -14,10 +21,13 @@ bool Token::activateCapture() {
 bool Token::isValidMove(int diceroll, int flexroll, int move) const {
     return checkValid(diceroll, flexroll, move);
 }
-void Token::activatePassive(const std::vector<Tile*>& path) {
+void Token::activatePassive(std::vector<Tile*>& path) {
     passiveAbility(path);
 }
-void Token::updatePosition(std::pair<size_t, size_t> newPos, size_t newPathProgress); {
+void Token::activateManual() {
+    manualAbility();
+}
+void Token::updatePosition(std::pair<size_t, size_t> newPos, size_t newPathProgress) {
     // precondition: newPos and distanceTraveled are valid
     pathProgress = newPathProgress;
     position = newPos;
@@ -43,14 +53,13 @@ bool Token::getIsProtected() const {
 void Token::setIsProtected(bool isProtected) {
     isProtectedByToken = isProtected;
 }
-
+bool Token::getAbilityAvailable() const {
+    return isAvailable();
+}
 
 Token::Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress):
     playerId{playerId}, id{id}, position{row, col}, pathProgress{pathProgress} {}
 
-void Token::updatePosition(std::pair<size_t, size_t> newPos) {
-    position = newPos;
-}
 
 Token::~Token() {}
 

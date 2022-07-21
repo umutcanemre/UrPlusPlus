@@ -19,6 +19,8 @@ class Token {
     virtual void passiveAbility(std::vector<Tile*>& path);
     virtual bool checkValid(int diceroll, int flexroll, int move) const;
     virtual bool captureAbility();
+    virtual void manualAbility();
+    virtual bool isAvailable() const; // checks for limited-use ability
   public:
     // id getters
     size_t getPlayerId() const;
@@ -28,8 +30,7 @@ class Token {
     void setIsProtected(bool);
 
     // Position get/set
-    void updatePosition(std::pair<size_t, size_t> newPos, size_t newPathProgress);
-    void updatePosition(int, const std::vector<Tile*>& );
+    void updatePosition(std::pair<size_t, size_t>, size_t);
     std::pair<size_t, size_t> getPosition();
 
     // Abilities
@@ -40,7 +41,12 @@ class Token {
     bool activateCapture();
     // Predicate for checking if move is valid from the perspective
     // of the token - different depending on the token type
-    bool isValidMove(int, int, int) const;
+    bool isValidMove(int diceRoll, int flexRoll, int move) const; 
+    // use manual ability 
+    void activateManual();
+    // get whether or not the ability can be used on the current turn
+    bool getAbilityAvailable() const; 
+
     // visitor design pattern
     virtual void acceptVisitor(GameViewer&) const = 0;
     virtual ~Token() = 0;
