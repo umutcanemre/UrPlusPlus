@@ -143,8 +143,6 @@ istream& operator>>(istream& in, Board& b) {
 
         in >> pathStr;
 
-        // cout << "(" << pathCoord.first << ", " << pathCoord.second << ")";
-
         for (const auto &c : pathStr) {
             // move the current position of the path in the specified direction
             switch (c) {
@@ -182,10 +180,8 @@ istream& operator>>(istream& in, Board& b) {
             b.paths[i].emplace_back(
                 b.gameMap[pathCoord.first][pathCoord.second].get());
             pathsCoords[i].emplace_back(pathCoord);
-            // cout << "(" << pathCoord.first << ", " << pathCoord.second << ")";
         }
 
-        // cout << endl;
     }
 
     // read in token positions

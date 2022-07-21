@@ -16,8 +16,8 @@ void GameState::rollDice() {
     // flexdiceroll = static_cast<size_t>(d(gen));
     // diceroll = static_cast<size_t>(d(gen));
 
-    diceroll = 2;
-    flexdiceroll = 2;
+    diceroll = 1;
+    flexdiceroll = 1;
 
     // Check if a valid move exists
     for (size_t i = 0; i < board->playersTokens.at(playerTurn).size(); ++i) {
@@ -35,6 +35,10 @@ void GameState::rollDice() {
 void GameState::moveToNextPlayerTurn() {
     diceAreFresh = false;
     playerTurn = (playerTurn + 1) % Board::playerCount;
+}
+
+void GameState::repeatPlayerTurn() {
+    diceAreFresh = false;
 }
 
 bool GameState::gameIsOver() const {
@@ -125,36 +129,60 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
     }) == playerTokens.end()) {
         return false;
     }
-
     if (!moveValid(tokenId, distance)) {
         return false;
     }
     Token* movingToken = playerTokens.at(tokenId).get();
-    size_t oldIndex = movingToken->getPathProgress() - 1;
-    Tile* oldTile = board->paths.at(playerTurn).at(oldIndex);
-    if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
-        // We are moving into the end
+    size_t oldIndex = movingToken->getPathProgress();
+    Tile* oldTile = (oldIndex == 0) ? nullptr : board->paths.at(playerTurn).at(oldIndex - 1);
+    bool captureTurnRepeat  = false;
+    bool tileTurnRepeat = false;
+
+    // Clear old tile
+    if (oldTile != nullptr) {
         oldTile->setOccupant(nullptr);
+    }
+
+    if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
+        // Reached end- no need to check for capture,
+        // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
     } else {
-        Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance);
+        Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance - 1);
         if (newTile->getOccupant() != nullptr) {
             // At this point, we are guaranteed this is an enemy token
             // that is capturable.
             // We need to send the enemy token to the start.
             Token* killedToken = newTile->getOccupant();
             killedToken->updatePosition(std::make_pair(0, 0), 0);
+            // Assassin changes to true; so we repeat turn
+            captureTurnRepeat = movingToken->activateCapture();
         }
 
-        // update tile occupants
-        oldTile->setOccupant(nullptr);
+        // Update new tile
         newTile->setOccupant(movingToken);
 
-        // update position stored in token
+        // Update position stored in token
         movingToken->updatePosition(newTile->getPosition(), movingToken->getPathProgress() + distance);
+
+        // Activates tile ability; returns true if additional turn gained
+        tileTurnRepeat = newTile->onMoveSuccess(movingToken, board->paths.at(playerTurn));
     }
 
-    // TODO integrate with tile/token abilities that make it so you stay on this players turn
-    moveToNextPlayerTurn();
+    // Tile/token ability updates/checks
+    if (diceroll + 1 == distance) {
+        // Activate speedster ability
+        // Note that in the case that we are using a flexible
+        // diceroll that happens to be equal to diceroll + 1
+        // It will just call activate manual on flexible which
+        // is harmless
+        movingToken->activateManual();
+    }
+
+    if (captureTurnRepeat  || tileTurnRepeat) {
+        repeatPlayerTurn();
+    } else {
+        moveToNextPlayerTurn();
+    }
     return true;
 }

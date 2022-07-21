@@ -1,13 +1,15 @@
 #include "tile.h"
 #include <vector>
 
-// bool Tile::moveAvailable(Token* t) {
-//     return Tile::checkMoveAvailable(t);
-// }
 
-// bool Tile::onMoveSuccess(Token* t, const std::vector<Token*> &path) {
-//     doOnMoveSuccess(t, path);
-// }
+bool Tile::onMoveSuccess(Token* t, const std::vector<Tile*> &path) {
+    return doOnMoveSuccess(t, path);
+}
+
+bool Tile::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
+    return false;
+}
+
 Tile::Tile(size_t row, size_t col) : position{std::make_pair(row, col)} {}
 
 bool Tile::specialCheck() {
