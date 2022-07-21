@@ -11,6 +11,7 @@ class TokenSpeedster : public Token {
     bool checkValid(int, int, int) const override;
   public:
     TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress, size_t uses);
+    TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);
 
     // overwritten methods
     void acceptVisitor(GameViewer&) const override;
