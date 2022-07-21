@@ -36,7 +36,7 @@ class Token {
     // Abilities
     // activates the passive ability of the token (if any)
     void activatePassive(std::vector<Tile*>& );
-    // returns false if the player's turn ends - true if it has an 
+    // returns false if the player's turn ends - true if it has an
     // on-capture ability
     bool activateCapture();
     // Predicate for checking if move is valid from the perspective

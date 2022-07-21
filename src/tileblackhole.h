@@ -5,7 +5,7 @@
 class TileBlackHole : public Tile {
   public:
     void acceptVisitor(GameViewer&) const override;
-    TileBlackHole();
+    TileBlackHole(size_t row, size_t col);
 };
 
 #endif

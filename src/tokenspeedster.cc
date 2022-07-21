@@ -9,8 +9,8 @@ bool TokenSpeedster::checkValid(int diceroll, int flexroll, int move) const {
     return move == diceroll;
 }
 
-void TokenSpeedster::manualAbility() { 
-    --uses; 
+void TokenSpeedster::manualAbility() {
+    --uses;
 }
 bool TokenSpeedster::manualIsAvailable() const {
     if (uses > 0) {
@@ -24,7 +24,7 @@ void TokenSpeedster::acceptVisitor(GameViewer& g) const {
 }
 
 TokenSpeedster::TokenSpeedster(size_t playerId, size_t id,
-    size_t row, size_t col, size_t pathProgress):
-    Token{playerId, id, row, col, pathProgress} {}
+    size_t row, size_t col, size_t pathProgress, size_t uses):
+    Token{playerId, id, row, col, pathProgress}, uses{uses} {}
 
 TokenSpeedster::~TokenSpeedster() {}

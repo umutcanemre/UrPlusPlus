@@ -8,36 +8,54 @@
 
 class Player {
     size_t playerId;
+    virtual void makeDiceRoll(GameState&) const = 0;
+    virtual void determineAndMakeMove(GameState&) const = 0;
+    virtual void skipTurn(GameState&) const = 0;
+
   public:
     // return true if we should advance to next player's turn
     // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
     // return
     Player();
-    virtual void playTurn(GameState&) const = 0;
+    void playTurn(GameState&) const;
     virtual ~Player();
 };
 
 
 class Human : public Player {
+    std::istream* in;
+    std::ostream* out;
+
+    static size_t charToTokenId(char c);
+
+    void makeDiceRoll(GameState&) const override;
+    void determineAndMakeMove(GameState&) const override;
+    void skipTurn(GameState&) const override;
   public:
     // return true if we should advance to next player's turn
     // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
     // return
-    Human();
-    void playTurn(GameState&) const override;
+    Human(std::istream* in, std::ostream* out);
     virtual ~Human();
 };
 
+class AIMadeInvalidMoveException : public std::exception {
+  public:
+    char *what();
+};
+
 class AI : public Player {
+    void makeDiceRoll(GameState&) const override;
+    void determineAndMakeMove(GameState&) const override;
+    void skipTurn(GameState&) const override;
   protected:
-    virtual int findMove(GameState&) = 0;
+    virtual std::pair<size_t, size_t> findMove(const GameState&) const = 0;
   public:
     // return true if we should advance to next player's turn
     // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
     // return
-    Human();
-    void playTurn(GameState&) const override;
-    virtual ~Human();
+    AI();
+    virtual ~AI();
 };
 
 #endif

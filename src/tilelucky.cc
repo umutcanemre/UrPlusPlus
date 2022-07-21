@@ -5,4 +5,4 @@ void TileLucky::acceptVisitor(GameViewer& g) const {
     g.visitTileLucky(*this);
 }
 
-TileLucky::TileLucky(): Tile{} {}
+TileLucky::TileLucky(size_t row, size_t col): Tile{row, col} {}

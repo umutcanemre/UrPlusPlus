@@ -1,10 +1,10 @@
 CXX = g++
 CXXFLAGS = -std=c++14 -Wall -g -MMD
 EXEC = UrPlusPlus
-OBJECTS = board.o cliview.o gamestate.o gameviewer.o guiview.o main.o \
-	path.o tilebasic.o tileblackhole.o tile.o tilelucky.o \
+OBJECTS = board.o cliview.o controller.o gamestate.o gameviewer.o guiview.o main.o \
+	path.o player.o tilebasic.o tileblackhole.o tile.o tilelucky.o \
 	tilenull.o tilerosette.o tiletornado.o tokenassassin.o \
-	tokenbasic.o token.o tokenflexible.o tokenspeedster.o tokensupporter.o player.o
+	tokenbasic.o token.o tokenflexible.o tokenspeedster.o tokensupporter.o
 
 DEPENDS = ${OBJECTS:.o=.d}
 
