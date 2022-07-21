@@ -9,10 +9,10 @@ bool Token::captureAbility() {
 }
 void Token::manualAbility() {
 }
-bool Token::isAvailable() const {
+bool Token::manualIsAvailable() const {
     // by default it returns true (non-limited ability)
     // possibly overridden if an ability of some child class is limited
-    return true;
+    return false;
 }
 
 bool Token::activateCapture() {
@@ -53,8 +53,8 @@ bool Token::getIsProtected() const {
 void Token::setIsProtected(bool isProtected) {
     isProtectedByToken = isProtected;
 }
-bool Token::getAbilityAvailable() const {
-    return isAvailable();
+bool Token::getManualAvailable() const {
+    return manualIsAvailable();
 }
 
 Token::Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress):

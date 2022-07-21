@@ -7,7 +7,7 @@ class TokenSpeedster : public Token {
     int uses = 1;
     // overwritten methods
     void manualAbility() override;
-    bool isAvailable() const override; 
+    bool manualIsAvailable() const override; 
     bool checkValid(int, int, int) const override;
   public:
     TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);

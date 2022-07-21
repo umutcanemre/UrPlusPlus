@@ -11,7 +11,7 @@ void TokenSupporter::passiveAbility(std::vector<Tile*>& path) {
     // find the next tile to protect
     for (size_t i=0; i<3; i++) {
         try {
-            Token * t = path.at(0)->getOccupant();
+            Token * t = path.at(i)->getOccupant();
             if (t && t->getPlayerId() == getPlayerId()) { 
                 // if found add isProtected status to it
                 isProtecting = t;

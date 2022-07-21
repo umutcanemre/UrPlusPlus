@@ -20,7 +20,7 @@ class Token {
     virtual bool checkValid(int diceroll, int flexroll, int move) const;
     virtual bool captureAbility();
     virtual void manualAbility();
-    virtual bool isAvailable() const; // checks for limited-use ability
+    virtual bool manualIsAvailable() const; // checks for limited-use ability
   public:
     // id getters
     size_t getPlayerId() const;
@@ -45,7 +45,7 @@ class Token {
     // use manual ability 
     void activateManual();
     // get whether or not the ability can be used on the current turn
-    bool getAbilityAvailable() const; 
+    bool getManualAvailable() const; 
 
     // visitor design pattern
     virtual void acceptVisitor(GameViewer&) const = 0;

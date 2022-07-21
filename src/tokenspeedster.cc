@@ -12,7 +12,7 @@ bool TokenSpeedster::checkValid(int diceroll, int flexroll, int move) const {
 void TokenSpeedster::manualAbility() { 
     --uses; 
 }
-bool TokenSpeedster::isAvailable() const {
+bool TokenSpeedster::manualIsAvailable() const {
     if (uses > 0) {
         return true;
     }
