@@ -4,6 +4,7 @@
 
 class TileRosette : public Tile {
     bool specialCheck() override;
+    bool doOnMoveSuccess(Token*, const std::vector<Tile*> &path) override;
   public:
     void acceptVisitor(GameViewer&) const override;
     TileRosette(size_t row, size_t col);

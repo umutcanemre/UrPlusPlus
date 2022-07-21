@@ -22,6 +22,7 @@ class GameState {
     bool noValidMoves = false;
     std::unique_ptr<Board> board;
     void moveToNextPlayerTurn();
+    void repeatPlayerTurn();
     bool moveValid(size_t tokenId, size_t distance);
   public:
     GameState();

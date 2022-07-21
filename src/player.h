@@ -13,9 +13,6 @@ class Player {
     virtual void skipTurn(GameState&) const = 0;
 
   public:
-    // return true if we should advance to next player's turn
-    // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
-    // return
     Player();
     void playTurn(GameState&) const;
     virtual ~Player();
@@ -32,9 +29,6 @@ class Human : public Player {
     void determineAndMakeMove(GameState&) const override;
     void skipTurn(GameState&) const override;
   public:
-    // return true if we should advance to next player's turn
-    // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
-    // return
     Human(std::istream* in, std::ostream* out);
     virtual ~Human();
 };
@@ -51,9 +45,6 @@ class AI : public Player {
   protected:
     virtual std::pair<size_t, size_t> findMove(const GameState&) const = 0;
   public:
-    // return true if we should advance to next player's turn
-    // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
-    // return
     AI();
     virtual ~AI();
 };
