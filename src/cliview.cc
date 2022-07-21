@@ -77,17 +77,14 @@ void CLIView::drawPath(const std::vector<std::vector<Tile*>> &gameboard,
         }
 
         if (newDir != dir) {
-            // (*out) << newDir;
             printBuffer[pathCoord.first][pathCoord.second] = newDir;
         }
 
         else if (dir == '>' || dir == '<') {
             printBuffer[pathCoord.first][pathCoord.second] = '-';
-            // (*out) << '-';
         }
         else if (dir == 'v' || dir == '^') {
             printBuffer[pathCoord.first][pathCoord.second] = '|';
-            // (*out) << '|';
         }
 
         dir = newDir;
