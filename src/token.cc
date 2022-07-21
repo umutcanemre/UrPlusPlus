@@ -1,5 +1,4 @@
 #include "token.h"
-#include <utility>
 
 // bool Token::activateCapture() {
 //     return captureAbility();
