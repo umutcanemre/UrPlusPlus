@@ -8,18 +8,27 @@ class Tile {
     Token* occupant = nullptr;
     std::pair<size_t, size_t> position;
 
-    // virtual bool checkMoveAvailable(Token*);
+    // Specialized check for tile abilities
+    // Currently used only for rosettes, but easily extendable
+    // Returns true if movable
+    virtual bool specialCheck();
+
     // virtual bool doOnMoveSuccess(Token*, const std::vector<Token*> &path);
 
   public:
-    // bool moveAvailable(Token*);
+    bool tileAvailable(Token*);
     // return true if we should advance to next player's turn
     // bool onMoveSuccess(Token*, const std::vector<Token*> &path);
     // return
 
     Tile(size_t row, size_t col);
 
-    const Token* getOccupant() const;
+    Token* getOccupant() const;
+    void setOccupant(Token*);
+    std::pair<size_t, size_t> getPosition() const;
+
+
+
     virtual void acceptVisitor(GameViewer&) const = 0;
     virtual ~Tile();
 };
