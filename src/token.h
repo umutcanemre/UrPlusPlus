@@ -17,10 +17,12 @@ class Token {
 
     // NVI private methods
     virtual void passiveAbility(std::vector<Tile*>& path);
-    virtual bool checkValid(int diceroll, int flexroll, int move) const;
+    virtual bool checkValid(int diceRoll, int flexRoll, int move) const;
     virtual bool captureAbility();
     virtual void manualAbility();
     virtual bool manualIsAvailable() const; // checks for limited-use ability
+    virtual std::vector<size_t> validMoveDists(int diceRoll, int flexRoll) const;
+
   public:
     // id getters
     size_t getPlayerId() const;
@@ -46,6 +48,8 @@ class Token {
     void activateManual();
     // get whether or not the ability can be used on the current turn
     bool getManualAvailable() const; 
+    // return valid move distances for this token based on this diceroll/flexroll
+    std::vector<size_t> getValidMoveDistances(int diceRoll, int flexRoll) const;
 
     // visitor design pattern
     virtual void acceptVisitor(GameViewer&) const = 0;

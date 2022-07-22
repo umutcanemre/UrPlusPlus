@@ -9,6 +9,15 @@ bool TokenSpeedster::checkValid(int diceroll, int flexroll, int move) const {
     return move == diceroll;
 }
 
+std::vector<size_t> TokenSpeedster::validMoveDists(int diceRoll, int flexRoll) const {
+    std::vector<size_t> v;
+    v.emplace_back(static_cast<size_t>(diceRoll));
+    if (manualIsAvailable()) {
+        v.emplace_back(static_cast<size_t>(diceRoll + 1));
+    }
+    return v;
+}
+
 void TokenSpeedster::manualAbility() {
     --uses;
 }

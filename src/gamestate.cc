@@ -112,10 +112,14 @@ void GameState::skipTurn() {
     moveToNextPlayerTurn();
 }
 
+<<<<<<< HEAD
 bool GameState::moveValid(size_t tokenId, size_t distance) {
     if (distance == 0) {
         return false;
     }
+=======
+bool GameState::moveValid(size_t tokenId, size_t distance) const {
+>>>>>>> first implementation of Level 1 AI (rng)
     Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
     if (!movingToken->isValidMove(diceroll, flexdiceroll, distance)) {
         return false;
