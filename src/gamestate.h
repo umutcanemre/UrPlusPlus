@@ -10,13 +10,19 @@ class InvalidGameStateOperation : public std::exception {
     char *what();
 };
 
+class InvalidWinnerException : public std::exception {
+  public:
+    char *what();
+};
+
+
 class Board;
 class Token;
 class Tile;
 
 class GameState {
     size_t playerTurn = 0; // ID of player next to act
-    size_t winnerPlayer = 0; // garbage value until hasWon
+    int winnerPlayer = -1; // garbage value until hasWon
     size_t diceroll, flexdiceroll;
     bool diceAreFresh = false;
     bool noValidMoves = false;

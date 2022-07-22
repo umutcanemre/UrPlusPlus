@@ -9,6 +9,10 @@ char* InvalidGameStateOperation::what() {
     return "Illegal Operation";
 }
 
+char* InvalidWinnerException::what() {
+    return "No winner exists yet";
+}
+
 void GameState::rollDice() {
     // std::random_device rd;
     // std::mt19937 gen(rd());
@@ -29,6 +33,7 @@ void GameState::rollDice() {
         }
     }
     // if there's no valid moves
+    diceAreFresh = true;
     noValidMoves = true;
 }
 
@@ -42,12 +47,16 @@ void GameState::repeatPlayerTurn() {
 }
 
 bool GameState::gameIsOver() const {
-    // TODO IMPLEMENT ME
+    if (winnerPlayer != -1) {
+        return true;
+    }
     return false;
 }
 
 size_t GameState::getWinner() const {
-    // maybe throw if not gameIsOver ?
+    if (winnerPlayer == -1) {
+        throw InvalidWinnerException{};
+    }
     return winnerPlayer;
 }
 
@@ -112,6 +121,14 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
     if (board->paths.at(playerTurn).size() < newIndex) {
         // Out of bounds move
         return false;
+    }
+    // Special case where index is equal to size
+    // Need to return before creating newtile
+    if (newIndex == board->paths.at(playerTurn).size()) {
+        if (movingToken->getPathProgress() == board->paths.at(playerTurn).size()) {
+            return false;
+        }
+        return true;
     }
     Tile* newTile = board->paths.at(playerTurn).at(newIndex);
     if (!newTile->tileAvailable(movingToken)) {
