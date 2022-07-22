@@ -37,7 +37,6 @@ Human::Human(std::istream *in, std::ostream *out): Player{}, in{in}, out{out} {}
 
 void Human::skipTurn(GameState& gameState) const {
     std::string cmd;
-    std::cout << "hit here 2" << std::endl;
     (*out) << "No valid moves! Please type 'skip' to skip your turn: "
         << std::endl;
 
