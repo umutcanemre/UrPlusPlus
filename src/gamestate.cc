@@ -165,6 +165,18 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         // Reached end- no need to check for capture,
         // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
+
+        bool playerWon = true;
+        for (auto token : board->getPlayersTokens().at(playerTurn)) {
+            if (token->getPathProgress() - 1 != board->paths.at(playerTurn).size()) {
+                playerWon = false;
+                break;
+            }
+        }
+        if (playerWon) {
+            winnerPlayer = playerTurn;
+            return true;
+        }
     } else {
         Tile* newTile = board->paths.at(playerTurn).at(oldPathProgress - 1 + distance);
         if (newTile->getOccupant() != nullptr) {
