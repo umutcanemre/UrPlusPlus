@@ -9,6 +9,10 @@ char* InvalidGameStateOperation::what() {
     return "Illegal Operation";
 }
 
+char* InvalidWinnerException::what() {
+    return "No winner exists yet";
+}
+
 void GameState::rollDice() {
     // std::random_device rd;
     // std::mt19937 gen(rd());
@@ -29,6 +33,7 @@ void GameState::rollDice() {
         }
     }
     // if there's no valid moves
+    diceAreFresh = true;
     noValidMoves = true;
 }
 
@@ -42,12 +47,16 @@ void GameState::repeatPlayerTurn() {
 }
 
 bool GameState::gameIsOver() const {
-    // TODO IMPLEMENT ME
+    if (winnerPlayer != -1) {
+        return true;
+    }
     return false;
 }
 
 size_t GameState::getWinner() const {
-    // maybe throw if not gameIsOver ?
+    if (winnerPlayer == -1) {
+        throw InvalidWinnerException{};
+    }
     return winnerPlayer;
 }
 
@@ -104,6 +113,9 @@ void GameState::skipTurn() {
 }
 
 bool GameState::moveValid(size_t tokenId, size_t distance) {
+    if (distance == 0) {
+        return false;
+    }
     Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
     if (!movingToken->isValidMove(diceroll, flexdiceroll, distance)) {
         return false;
@@ -112,6 +124,14 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
     if (board->paths.at(playerTurn).size() < newIndex) {
         // Out of bounds move
         return false;
+    }
+    // Special case where index is equal to size
+    // Need to return before creating newtile
+    if (board->paths.at(playerTurn).size() == newIndex) {
+        if (movingToken->getPathProgress() - 1 == board->paths.at(playerTurn).size()) {
+            return false;
+        }
+        return true;
     }
     Tile* newTile = board->paths.at(playerTurn).at(newIndex);
     if (!newTile->tileAvailable(movingToken)) {
@@ -133,8 +153,9 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         return false;
     }
     Token* movingToken = playerTokens.at(tokenId).get();
-    size_t oldIndex = movingToken->getPathProgress();
-    Tile* oldTile = (oldIndex == 0) ? nullptr : board->paths.at(playerTurn).at(oldIndex - 1);
+    // Calculating old path progress causes issues when pathprogress = 0
+    size_t oldPathProgress = movingToken->getPathProgress();
+    Tile* oldTile = (oldPathProgress == 0) ? nullptr : board->paths.at(playerTurn).at(oldPathProgress - 1);
     bool captureTurnRepeat  = false;
     bool tileTurnRepeat = false;
 
@@ -143,12 +164,24 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         oldTile->setOccupant(nullptr);
     }
 
-    if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
+    if ((oldPathProgress - 1 + distance) == (board->paths.at(playerTurn).size())) {
         // Reached end- no need to check for capture,
         // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
+
+        bool playerWon = true;
+        for (auto token : board->getPlayersTokens().at(playerTurn)) {
+            if (token->getPathProgress() - 1 != board->paths.at(playerTurn).size()) {
+                playerWon = false;
+                break;
+            }
+        }
+        if (playerWon) {
+            winnerPlayer = playerTurn;
+            return true;
+        }
     } else {
-        Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance - 1);
+        Tile* newTile = board->paths.at(playerTurn).at(oldPathProgress - 1 + distance);
         if (newTile->getOccupant() != nullptr) {
             // At this point, we are guaranteed this is an enemy token
             // that is capturable.
