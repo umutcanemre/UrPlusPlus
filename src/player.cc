@@ -64,7 +64,7 @@ void Human::makeDiceRoll(GameState &gameState) const {
         (*out) << "Invalid, please type 'roll' to roll the dice: " << std::endl;
         (*in) >> cmd;
     }
-    
+
     gameState.rollDice();
 }
 
