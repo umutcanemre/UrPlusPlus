@@ -124,8 +124,8 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
     }
     // Special case where index is equal to size
     // Need to return before creating newtile
-    if (newIndex == board->paths.at(playerTurn).size()) {
-        if (movingToken->getPathProgress() == board->paths.at(playerTurn).size()) {
+    if (board->paths.at(playerTurn).size() == newIndex) {
+        if (movingToken->getPathProgress() - 1 == board->paths.at(playerTurn).size()) {
             return false;
         }
         return true;
@@ -150,8 +150,9 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         return false;
     }
     Token* movingToken = playerTokens.at(tokenId).get();
-    size_t oldIndex = movingToken->getPathProgress();
-    Tile* oldTile = (oldIndex == 0) ? nullptr : board->paths.at(playerTurn).at(oldIndex - 1);
+    // Calculating old path progress causes issues when pathprogress = 0
+    size_t oldPathProgress = movingToken->getPathProgress();
+    Tile* oldTile = (oldPathProgress == 0) ? nullptr : board->paths.at(playerTurn).at(oldPathProgress - 1);
     bool captureTurnRepeat  = false;
     bool tileTurnRepeat = false;
 
@@ -160,12 +161,12 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         oldTile->setOccupant(nullptr);
     }
 
-    if ((oldIndex + distance) == (board->paths.at(playerTurn).size())) {
+    if ((oldPathProgress - 1 + distance) == (board->paths.at(playerTurn).size())) {
         // Reached end- no need to check for capture,
         // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
     } else {
-        Tile* newTile = board->paths.at(playerTurn).at(oldIndex + distance - 1);
+        Tile* newTile = board->paths.at(playerTurn).at(oldPathProgress - 1 + distance);
         if (newTile->getOccupant() != nullptr) {
             // At this point, we are guaranteed this is an enemy token
             // that is capturable.

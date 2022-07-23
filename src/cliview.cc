@@ -166,7 +166,7 @@ void CLIView::doNotify(const GameState& g) {
     size_t pathLength = g.getPlayersPaths()[0].size();
     drawInfoTokens(g.getPlayersTokens(),
         "victorious",
-        [pathLength](const Token *t) { return t->getPathProgress() == pathLength; });
+        [pathLength](const Token *t) { return t->getPathProgress() - 1 == pathLength; });
 
     (*out) << std::endl;
 
