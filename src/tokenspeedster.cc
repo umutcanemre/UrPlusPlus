@@ -3,7 +3,7 @@
 #include "gameviewer.h"
 
 bool TokenSpeedster::checkValid(int diceroll, int flexroll, int move) const {
-    if (uses > 0) {
+    if (manualIsAvailable()) {
         return move == diceroll || move == diceroll + 1;
     } // else
     return move == diceroll;

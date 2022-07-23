@@ -55,7 +55,7 @@ class AI : public Player {
     std::vector<std::pair<size_t, size_t>> findAllValidMoves(const GameState&) const;
     // returns the tokenID and distance pairs with a weight assigned to each and sorted in order of weight
     virtual std::vector<std::pair<int, std::pair<size_t, size_t>>> 
-    assignPriorities(std::vector<std::pair<size_t, size_t>> &);
+    assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&) const;
     // findMove algorithm for each of the AIs
     virtual std::pair<size_t, size_t> findMove(const GameState&) const = 0;
   public:
@@ -75,7 +75,7 @@ class Level2AI : public AI {
     // void sortByPriorities(std::vector<std::pair<size_t, size_t>> &) const override;
   protected:
     std::vector<std::pair<int, std::pair<size_t, size_t>>> 
-    assignPriorities(std::vector<std::pair<size_t, size_t>> &) override;
+    assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&) const override;
     std::pair<size_t, size_t> findMove(const GameState&) const override;
   public:
     Level2AI();
@@ -86,7 +86,7 @@ class Level3AI : public AI {
     // void sortByPriorities(std::vector<std::pair<size_t, size_t>> &) const override;
   protected:
     std::vector<std::pair<int, std::pair<size_t, size_t>>> 
-    assignPriorities(std::vector<std::pair<size_t, size_t>> &) override;
+    assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&) const override;
     std::pair<size_t, size_t> findMove(const GameState&) const override;
   public:
     Level3AI();
