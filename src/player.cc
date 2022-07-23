@@ -11,6 +11,13 @@
 #include "tokenflexible.h"
 #include "tokenspeedster.h"
 #include "tokensupporter.h"
+#include "tile.h"
+#include "tilebasic.h"
+#include "tileblackhole.h"
+#include "tilelucky.h"
+#include "tilerosette.h"
+#include "tiletornado.h"
+#include "tilenull.h"
 
 using namespace std;
 
@@ -240,37 +247,56 @@ vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities(
     // Level 2: an AI that slightly favours certain beneficial moves over others.
     // This is the order of preference: (highest to lowest priority)
     // 1. Most strongly favours moves that end the current token's run. 
-    // 2. Favour moves that land on a rosette or a lucky tile. 
-    // 3. Favour moves that steal someone else’s token. 
-    // 4. Avoid moves that land on black hole or tornado.
+    // 2. Favour moves that land on a rosette or another tile that grants a new turn. 
+    // 3. Favour moves that land on a rosette or another tile that grants invulnerability. 
+    // 4. Favour moves that steal someone else’s token. 
+    // 5. Avoid moves that land on black hole or tornado or lucky if has a negative effect, 
+    //    but favours these tiles if they have a positive effect.
+
+
+    // Level 2: an AI that slightly favours certain beneficial moves over others.
+    // This is the order of preference: (highest to lowest priority)
+    // 1. Most strongly favours moves that end the current token's run. +4 
+    // 2. Favour moves that land on a rosette. +3
+    // 3. Favour moves that steal someone else’s token. +2 
+    // 4. Favour moves that land on a lucky tile. +1 
+    // 5. Avoid moves that land on tornado. -1
+    // 6. Avoid moves that land on black hole. -2
+    // 7. Neutral to moves otherwise. +0
     
     vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
+    const std::vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
+    std::vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
+
     for (auto x : movelist) {
         movesAndWeights.emplace_back(0, x);
     }
 
-    // TODO: implement these ifs 
-    // assign weight 1 to item 3
+    // TODO: implement Tile public interface to enable this
+    // assign weight 1 to item 3, weight 2 to item 2, weight 3 to item 1
     for (auto &x : movesAndWeights) {
-        size_t distance = x.second.second;
-        if (1) {
-            ++x.first;
+        Token *token = tokens.at(x.second.first);
+        size_t newIndex = token->getPathProgress() + x.second.second - 1;
+        // item 1 - end of path is reached
+        if (newIndex == path.size()) {
+            x.first += 4;
         }
-    }
-
-    // assign weight 2 to item 2
-    for (auto &x : movesAndWeights) {
-        size_t distance = x.second.second;
-        if (1) {
-            x.first += 2;
-        }
-    }
-
-    // assign weight 3 to item 1
-    for (auto &x : movesAndWeights) {
-        size_t distance = x.second.second;
-        if (1) {
-            x.first += 3;
+        // item 2,3,4 (exclusive with item 1) but not each other
+        else {
+            int tileMoveWeight = path.at(newIndex)->acceptVisitor(*this);
+            x.first += tileMoveWeight;
+            // if (path.at(newIndex)->grantsExtraTurn()) {
+            //     x.first += 2;
+            // }
+            // if (path.at(newIndex)->grantsInvulnerability()) {
+            //     x.first += 2;
+            // }
+            // if (path.at(newIndex)->getOccupant()) {
+            //     // at this point since we already ran moveValid, we are guaranteed that if 
+            //     // the tile has an occupant, it is an enemy token
+            //     ++x.first;
+            // }
+            // x.first += path.at(newIndex)->sendsPlayerForward(newIndex, path);
         }
     }
 
@@ -314,6 +340,7 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
     vector<pair<size_t, size_t>> &movelist, const GameState &gameState) const {
     // Level 3: an AI that favours certain beneficial moves over others and also is capable
     // of using abilities at the right times. This includes:
+
     // - prefers using assassin to capture other tokens over using basic/others
     // - prefers using supporter to support special tokens over basic tokens
     // - prefers using limited-use abilities only when it comes with a significant benefit: like 
@@ -322,6 +349,7 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
     //   in front of an enemy token - the opponent's most likely roll - on a shared path
     // - prefers tornado if it sends player forward in the path; avoids tornado if it sends player
     //   backward in the path
+
     // This is the order of preference: (highest to lowest priority)
     // 1. Most strongly favours moves that end the current token's run. 
     // 2. Favour moves that land on a rosette or a lucky tile. 

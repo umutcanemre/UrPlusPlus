@@ -2,6 +2,21 @@
 #include <vector>
 
 
+
+
+// bool Tile::rollsDice() const {
+//     return false;
+// }
+// bool Tile::extraTurn() const {
+//     return false;
+// }
+// bool Tile::makesInvulnerable() const {
+//     return false;
+// }
+// int Tile::avgPlayerMoveDistance(size_t location, const std::vector<Tile*> &path) const {
+//     return 0;
+// }
+
 bool Tile::onMoveSuccess(Token* t, const std::vector<Tile*> &path) {
     return doOnMoveSuccess(t, path);
 }
@@ -40,6 +55,21 @@ std::pair<size_t, size_t> Tile::getPosition() const {
     return position;
 }
 
+// bool Tile::grantsExtraTurn() const {
+//     return extraTurn();
+// }
+// // returns true if this tile grants an extra dice roll (but not turn) 
+// bool Tile::grantsDiceRoll() const {
+//     return rollsDice(); 
+// }
+// // returns true if this tile grants invulnerability 
+// bool Tile::grantsInvulnerability() const {
+//     return makesInvulnerable();
+// }
+
+// int Tile::sendsPlayerForward(size_t location, const std::vector<Tile*> &path) const {
+//     return avgPlayerMoveDistance(location, path);
+// }
 
 
 Tile::~Tile() {}

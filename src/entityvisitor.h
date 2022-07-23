@@ -1,6 +1,5 @@
-#ifndef URPLUSPLUS_GAMEVIEWER_H_
-#define URPLUSPLUS_GAMEVIEWER_H_
-#include "entityvisitor.h"
+#ifndef URPLUSPLUS_ENTITYVISITOR_H_
+#define URPLUSPLUS_ENTITYVISITOR_H_
 
 class GameState;
 
@@ -21,7 +20,7 @@ class TokenSpeedster;
 class TokenSupporter;
 
 
-class GameViewer : public EntityVisitor {
+class EntityVisitor {
     virtual void doNotify(const GameState&) = 0 ;
   public:
     void notify(const GameState&);
@@ -40,7 +39,7 @@ class GameViewer : public EntityVisitor {
     virtual void visitTokenSpeedster(const TokenSpeedster&) = 0;
     virtual void visitTokenSupporter(const TokenSupporter&) = 0;
 
-    virtual ~GameViewer();
+    virtual ~EntityVisitor();
 };
 
 #endif

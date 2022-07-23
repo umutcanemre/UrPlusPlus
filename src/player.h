@@ -6,6 +6,15 @@
 #include <vector>
 #include "gamestate.h"
 
+// AI-headers
+#include "tile.h"
+#include "tilebasic.h"
+#include "tileblackhole.h"
+#include "tilelucky.h"
+#include "tilerosette.h"
+#include "tiletornado.h"
+#include "tilenull.h"
+
 class Player {
     static size_t nextPlayerId;
     const size_t playerId;

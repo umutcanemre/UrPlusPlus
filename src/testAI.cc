@@ -17,7 +17,8 @@ int main() {
 
     Human gamer1{&cin, &cout};
     // Human gamer2{&cin, &cout};
-    Level1AI gamer2{};
+    // Level1AI gamer2{};
+    Level2AI gamer2{};
 
     Controller game{&state, {&gamer1, &gamer2}};
 
