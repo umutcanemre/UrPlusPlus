@@ -113,6 +113,9 @@ void GameState::skipTurn() {
 }
 
 bool GameState::moveValid(size_t tokenId, size_t distance) {
+    if (distance == 0) {
+        return false;
+    }
     Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
     if (!movingToken->isValidMove(diceroll, flexdiceroll, distance)) {
         return false;
