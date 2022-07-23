@@ -37,6 +37,7 @@ Human::Human(std::istream *in, std::ostream *out): Player{}, in{in}, out{out} {}
 
 void Human::skipTurn(GameState& gameState) const {
     std::string cmd;
+
     (*out) << "No valid moves! Please type 'skip' to skip your turn: "
         << std::endl;
 
@@ -63,6 +64,7 @@ void Human::makeDiceRoll(GameState &gameState) const {
         (*out) << "Invalid, please type 'roll' to roll the dice: " << std::endl;
         (*in) >> cmd;
     }
+    
     gameState.rollDice();
 }
 
