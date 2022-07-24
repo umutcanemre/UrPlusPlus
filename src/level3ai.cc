@@ -77,8 +77,8 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
     // 4. Avoid moves that land on black holes.
 
     vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
-    const std::vector<Tile*> playerPath = gameState.getPlayersPaths().at(getPlayerId());
-    std::vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
+    const vector<Tile*> playerPath = gameState.getPlayersPaths().at(getPlayerId());
+    vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
 
     for (auto x : movelist) {
         movesAndWeights.emplace_back(0, x);
@@ -96,7 +96,7 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
         else {
             Token *occupant = playerPath.at(newIndex)->getOccupant();
             if (occupant) {
-                const std::vector<Tile*> opponentPath = gameState.getPlayersPaths().at(occupant->getPlayerId());
+                const vector<Tile*> opponentPath = gameState.getPlayersPaths().at(occupant->getPlayerId());
             }
             playerPath.at(newIndex)->acceptVisitor(*this); // sets 
             x.first += getTileScore();

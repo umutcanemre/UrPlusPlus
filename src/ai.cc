@@ -70,20 +70,12 @@ vector<pair<size_t, size_t>> AI::findAllValidMoves(const GameState& gameState) c
         }
     }
 
-    std::cout << "All moves: " << std::endl;
-    for (auto x : validMoves) {
-        std::cout << x.first << " " << x.second << std::endl;
-    }
     return validMoves;
 }
 
 bool AI::moveIsNotRepeated(vector<pair<size_t, size_t>> validMoves, size_t tokenId, size_t rollNum) {
     // tokenId is tokenId, rollNum is either diceRoll or flexDiceRoll
     // returns true if <tokenId, rollNum> is unique in validMoves (no occurrences yet)
-    std::cout << (find_if(validMoves.begin(), validMoves.end(), [tokenId,rollNum](pair<size_t, size_t> move) {
-                return move.first == tokenId && move.second == rollNum;
-            }) == validMoves.end()) << " ";
-    std::cout << tokenId << " " << rollNum << endl;
     return (find_if(validMoves.begin(), validMoves.end(), [tokenId,rollNum](pair<size_t, size_t> move) {
                 return move.first == tokenId && move.second == rollNum;
             }) == validMoves.end());

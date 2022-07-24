@@ -5,13 +5,6 @@
 #include "ai.h"
 
 #include "entityvisitor.h"
-#include "tile.h"
-#include "tilebasic.h"
-#include "tileblackhole.h"
-#include "tilelucky.h"
-#include "tilerosette.h"
-#include "tiletornado.h"
-#include "tilenull.h"
 
 
 class Level1AI : public AI {

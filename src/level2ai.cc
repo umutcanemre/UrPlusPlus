@@ -33,7 +33,8 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
     // pre: there is at least 1 valid move, so movelist.length should be >= 1 or something is wrong
     // with my code
     vector<pair<size_t, size_t>> movelist = findAllValidMoves(gameState);
-    vector<pair<int, pair<size_t, size_t>>> weightedMovelist = assignPriorities(movelist,gameState);
+    vector<pair<int, pair<size_t, size_t>>> weightedMovelist 
+        = assignPriorities(movelist,gameState);
 
     // first loop: find the highest priority
     int maxWeight = weightedMovelist.at(0).first;
@@ -55,8 +56,8 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
 
     size_t index = static_cast<size_t>(rand() % candidates.size());
 
-    std::cout << "Selected move: " << candidates.at(index).first << candidates.at(index).second.first 
-        << candidates.at(index).second.second << std::endl;
+    cout << "Selected move: " << candidates.at(index).first << candidates.at(index).second.first 
+        << candidates.at(index).second.second << endl;
     return candidates.at(index).second;
 }
 
@@ -73,8 +74,8 @@ vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities(
     // 7. Neutral to moves otherwise. +0
     
     vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
-    const std::vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
-    std::vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
+    const vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
+    vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
 
     for (auto x : movelist) {
         movesAndWeights.emplace_back(0, x);
