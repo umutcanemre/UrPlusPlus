@@ -34,7 +34,7 @@ class GameState {
     void rollDice();
     void skipTurn(); // only valid if no valid moves, skips to next player
     bool movePiece(size_t tokenId, size_t distance);
-    bool moveValid(size_t tokenId, size_t distance); // checks if move is valid
+    bool moveValid(size_t tokenId, size_t distance) const; // checks if move is valid
 
     bool gameIsOver() const;
     size_t getWinner() const;

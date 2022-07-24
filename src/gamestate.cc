@@ -112,7 +112,7 @@ void GameState::skipTurn() {
     moveToNextPlayerTurn();
 }
 
-bool GameState::moveValid(size_t tokenId, size_t distance) {
+bool GameState::moveValid(size_t tokenId, size_t distance) const {
     if (distance == 0) {
         return false;
     }

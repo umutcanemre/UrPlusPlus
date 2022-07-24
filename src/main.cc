@@ -5,6 +5,7 @@
 #include "cliview.h"
 #include "controller.h"
 #include "player.h"
+#include "human.h"
 
 using namespace std;
 

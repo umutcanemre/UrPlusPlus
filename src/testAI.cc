@@ -5,6 +5,10 @@
 #include "cliview.h"
 #include "controller.h"
 #include "player.h"
+#include "human.h"
+#include "level1ai.h"
+#include "level2ai.h"
+#include "level3ai.h"
 
 using namespace std;
 
