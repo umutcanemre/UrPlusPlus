@@ -22,8 +22,8 @@ class CLIView : public GameViewer {
         const std::vector<Tile*> &path) const;
     void drawBoard(const std::vector<std::vector<Tile*>> &gameboard);
   public:
-    void visitTileStart(const TileStart&) override;
-    void visitTileEnd(const TileEnd&) override;
+    // void visitTileStart(const TileStart&) override;
+    // void visitTileEnd(const TileEnd&) override;
     void visitTileTornado(const TileTornado&) override;
     void visitTileBlackHole(const TileBlackHole&) override;
     void visitTileLucky(const TileLucky&) override;

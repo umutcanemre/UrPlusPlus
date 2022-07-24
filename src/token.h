@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-class GameViewer;
+class EntityVisitor;
 class Tile;
 
 class Token {
@@ -52,7 +52,7 @@ class Token {
     std::vector<size_t> getValidMoveDistances(int diceRoll, int flexRoll) const;
 
     // visitor design pattern
-    virtual void acceptVisitor(GameViewer&) const = 0;
+    virtual void acceptVisitor(EntityVisitor&) const = 0;
     virtual ~Token() = 0;
 
     Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);

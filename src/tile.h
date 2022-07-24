@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "token.h"
-#include "player.h"
 
 class Tile {
     Token* occupant = nullptr;
@@ -51,8 +50,7 @@ class Tile {
 
 
 
-    virtual void acceptVisitor(GameViewer&) const = 0;
-    virtual void acceptVisitor(AI&) const = 0;
+    virtual void acceptVisitor(EntityVisitor&) const = 0;
     virtual ~Tile();
 };
 

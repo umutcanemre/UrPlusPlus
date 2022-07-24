@@ -1,7 +1,7 @@
 #include "tilelucky.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileLucky::acceptVisitor(GameViewer& g) const {
+void TileLucky::acceptVisitor(EntityVisitor& g) const {
     g.visitTileLucky(*this);
 }
 

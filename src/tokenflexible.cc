@@ -1,7 +1,7 @@
 #include "tokenflexible.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TokenFlexible::acceptVisitor(GameViewer& g) const {
+void TokenFlexible::acceptVisitor(EntityVisitor& g) const {
     g.visitTokenFlexible(*this);
 };
 

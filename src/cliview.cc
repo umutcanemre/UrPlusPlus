@@ -177,13 +177,13 @@ void CLIView::doNotify(const GameState& g) {
     }
 }
 
-void CLIView::visitTileStart(const TileStart& t) {
-    (*out) << 'S';
-}
+// void CLIView::visitTileStart(const TileStart& t) {
+//     (*out) << 'S';
+// }
 
-void CLIView::visitTileEnd(const TileEnd& t) {
-    (*out) << 'E';
-}
+// void CLIView::visitTileEnd(const TileEnd& t) {
+//     (*out) << 'E';
+// }
 
 void CLIView::visitTileTornado(const TileTornado& t) {
     (*out) << 'T';

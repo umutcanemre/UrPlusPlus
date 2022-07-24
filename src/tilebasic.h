@@ -4,7 +4,7 @@
 
 class TileBasic : public Tile {
   public:
-    void acceptVisitor(GameViewer&) const override;
+    void acceptVisitor(EntityVisitor&) const override;
     TileBasic(size_t row, size_t col);
 };
 

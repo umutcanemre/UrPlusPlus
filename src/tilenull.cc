@@ -1,8 +1,8 @@
 
 #include "tilenull.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileNull::acceptVisitor(GameViewer& g) const {
+void TileNull::acceptVisitor(EntityVisitor& g) const {
     g.visitTileNull(*this);
 }
 

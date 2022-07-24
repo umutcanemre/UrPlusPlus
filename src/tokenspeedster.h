@@ -15,7 +15,7 @@ class TokenSpeedster : public Token {
     TokenSpeedster(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress);
 
     // overwritten methods
-    void acceptVisitor(GameViewer&) const override;
+    void acceptVisitor(EntityVisitor&) const override;
 
     ~TokenSpeedster();
 

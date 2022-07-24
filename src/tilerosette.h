@@ -9,7 +9,7 @@ class TileRosette : public Tile {
     // bool extraTurn() const override;
     // bool makesInvulnerable() const override;
   public:
-    void acceptVisitor(GameViewer&) const override;
+    void acceptVisitor(EntityVisitor&) const override;
     TileRosette(size_t row, size_t col);
 };
 

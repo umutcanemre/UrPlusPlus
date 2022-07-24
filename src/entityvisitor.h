@@ -21,11 +21,10 @@ class TokenSupporter;
 
 
 class EntityVisitor {
-    virtual void doNotify(const GameState&) = 0 ;
   public:
-    void notify(const GameState&);
-    virtual void visitTileStart(const TileStart&) = 0;
-    virtual void visitTileEnd(const TileEnd&) = 0;
+    // virtual void visitTileStart(const TileStart&) = 0;
+    // virtual void visitTileEnd(const TileEnd&) = 0;
+
     virtual void visitTileTornado(const TileTornado&) = 0;
     virtual void visitTileBlackHole(const TileBlackHole&) = 0;
     virtual void visitTileLucky(const TileLucky&) = 0;
@@ -41,5 +40,7 @@ class EntityVisitor {
 
     virtual ~EntityVisitor();
 };
+
+
 
 #endif

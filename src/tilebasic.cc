@@ -1,7 +1,7 @@
 #include "tilebasic.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileBasic::acceptVisitor(GameViewer& g) const {
+void TileBasic::acceptVisitor(EntityVisitor& g) const {
     g.visitTileBasic(*this);
 }
 

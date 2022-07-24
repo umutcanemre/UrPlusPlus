@@ -1,7 +1,7 @@
 #include "tileblackhole.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileBlackHole::acceptVisitor(GameViewer& g) const {
+void TileBlackHole::acceptVisitor(EntityVisitor& g) const {
     g.visitTileBlackHole(*this);
 }
 

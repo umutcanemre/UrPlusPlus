@@ -1,5 +1,5 @@
 #include "tokensupporter.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 #include "tile.h"
 
 void TokenSupporter::passiveAbility(std::vector<Tile*>& path) {
@@ -29,7 +29,7 @@ void TokenSupporter::passiveAbility(std::vector<Tile*>& path) {
 }
 
 
-void TokenSupporter::acceptVisitor(GameViewer& g) const {
+void TokenSupporter::acceptVisitor(EntityVisitor& g) const {
     g.visitTokenSupporter(*this);
 };
 
