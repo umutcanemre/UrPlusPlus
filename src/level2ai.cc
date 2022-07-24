@@ -54,7 +54,8 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
     }
 
     size_t index = static_cast<size_t>(rand() % candidates.size());
-    std::cout << candidates.at(index).first << candidates.at(index).second.first 
+
+    std::cout << "Selected move: " << candidates.at(index).first << candidates.at(index).second.first 
         << candidates.at(index).second.second << std::endl;
     return candidates.at(index).second;
 }

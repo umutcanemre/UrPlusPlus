@@ -39,7 +39,7 @@ void Human::skipTurn(GameState& gameState) const {
 void Human::makeDiceRoll(GameState &gameState) const {
     string cmd;
 
-    (*out) << "Please type 'roll' to roll the dice or 't' to show your tokens: " << endl;
+    (*out) << "Please type 'roll' to roll the dice: " << endl;
 
     gameState.getPlayersTokens();
 
