@@ -3,8 +3,6 @@
 #include "tile.h"
 
 class TileLucky : public Tile {
-    // bool rollsDice() const override; 
-    // int avgPlayerMoveDistance(size_t location, const std::vector<Tile*> &path) const override;
   public:
     void acceptVisitor(EntityVisitor&) const override;
     TileLucky(size_t row, size_t col);

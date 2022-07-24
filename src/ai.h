@@ -37,9 +37,6 @@ class AI : public Player, public EntityVisitor {
     void makeDiceRoll(GameState&) const override;
     void determineAndMakeMove(GameState&) override;
     void skipTurn(GameState&) const override;
-    // AI-unique functions
-    // i dont know which of sortByPriorities and assignPriorities I will use yet
-    // virtual void sortByPriorities(std::vector<std::pair<size_t, size_t>> &) const = 0;
 
   protected:
     void setTokenScore(int);

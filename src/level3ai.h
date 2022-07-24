@@ -24,7 +24,10 @@ class TokenSupporter;
 
 
 class Level3AI : public AI {
-    // void sortByPriorities(std::vector<std::pair<size_t, size_t>> &) const override;
+    bool tileRollsDice = false;
+    bool tileRepeatsTurn = false;
+    bool tileGrantsInvulnerability = false;
+    float tileAvgMoveDist = 0;
   protected:
     std::vector<std::pair<int, std::pair<size_t, size_t>>> 
     assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
@@ -42,6 +45,7 @@ class Level3AI : public AI {
     void visitTokenFlexible(const TokenFlexible&) override;
     void visitTokenSpeedster(const TokenSpeedster&) override;
     void visitTokenSupporter(const TokenSupporter&) override;
+    
     Level3AI();
     ~Level3AI();
 };

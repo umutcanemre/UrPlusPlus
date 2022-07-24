@@ -3,9 +3,6 @@
 #include "tile.h"
 
 class TileTornado : public Tile {
-  // NVI overrides
-    // bool rollsDice() const override; 
-    // int avgPlayerMoveDistance(size_t location, const std::vector<Tile*> &path) const override;
   public:
     void acceptVisitor(EntityVisitor&) const override;
     TileTornado(size_t row, size_t col);

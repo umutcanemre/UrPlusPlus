@@ -17,7 +17,6 @@ class TileNull;
 
 
 class Level2AI : public AI {
-    // void sortByPriorities(std::vector<std::pair<size_t, size_t>> &) const override;
     int valueOfPiece(const Tile&);
   protected:
     std::vector<std::pair<int, std::pair<size_t, size_t>>> 

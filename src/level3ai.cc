@@ -32,7 +32,6 @@ pair<size_t, size_t> Level3AI::findMove(const GameState &gameState) {
     vector<pair<size_t, size_t>> movelist = findAllValidMoves(gameState);
     vector<pair<int, pair<size_t, size_t>>> weightedMovelist = assignPriorities(movelist,gameState);
 
-    // sortByPriorities(movelist); // post: first is highest priority 
     // first loop: find the highest priority
     int maxWeight = weightedMovelist.at(0).first;
     for (auto x: weightedMovelist) {
@@ -78,7 +77,7 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
     // 4. Avoid moves that land on black holes.
 
     vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
-    const std::vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
+    const std::vector<Tile*> playerPath = gameState.getPlayersPaths().at(getPlayerId());
     std::vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
 
     for (auto x : movelist) {
@@ -90,12 +89,16 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
         Token *token = tokens.at(x.second.first);
         size_t newIndex = token->getPathProgress() + x.second.second - 1;
         // item 1 - end of path is reached
-        if (newIndex == path.size()) {
+        if (newIndex == playerPath.size()) {
             x.first += 4;
         }
         // item 2,3,4 (exclusive with item 1) but not each other
         else {
-            path.at(newIndex)->acceptVisitor(*this); // sets 
+            Token *occupant = playerPath.at(newIndex)->getOccupant();
+            if (occupant) {
+                const std::vector<Tile*> opponentPath = gameState.getPlayersPaths().at(occupant->getPlayerId());
+            }
+            playerPath.at(newIndex)->acceptVisitor(*this); // sets 
             x.first += getTileScore();
         }
     }
@@ -120,7 +123,4 @@ void Level3AI::visitTokenSpeedster(const TokenSpeedster& o) {
     if (o.getManualAvailable()) setTokenScore(2); 
     else setTokenScore(1);
 }
-void Level3AI::visitTokenSupporter(const TokenSupporter& o) { 
-    // how to make it valid if supporting, invalid if not?
-    setTokenScore(4); 
-}
+void Level3AI::visitTokenSupporter(const TokenSupporter& o) { setTokenScore(4); }
