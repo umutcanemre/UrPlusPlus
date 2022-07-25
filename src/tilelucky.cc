@@ -5,13 +5,18 @@
 void TileLucky::acceptVisitor(EntityVisitor& g) const {
     g.visitTileLucky(*this);
 }
-bool TileLucky::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
-    int index = t->getPathProgress() - 1;
-    
+
+size_t TileLucky::generateRandomResult() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::binomial_distribution<> d(4, 0.5);
-    size_t randomResult = static_cast<size_t>(d(gen));
+    return static_cast<size_t>(d(gen));
+}
+
+bool TileLucky::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
+    int index = t->getPathProgress() - 1;
+    
+    size_t randomResult = generateRandomResult();
 
     if (randomResult == 0) {
         // Send to front

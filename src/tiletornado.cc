@@ -7,14 +7,18 @@ void TileTornado::acceptVisitor(EntityVisitor& g) const {
     g.visitTileTornado(*this);
 }
 
+size_t TileTornado::generateRandomResult() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::binomial_distribution<> d(4, 0.5);
+    return static_cast<size_t>(d(gen));
+}
+
 bool TileTornado::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
     // I'm converting to int here for convenience to avoid underflow.
     int index = t->getPathProgress() - 1;
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::binomial_distribution<> d(4, 0.5);
-    size_t randomResult = static_cast<size_t>(d(gen));
+    size_t randomResult = generateRandomResult();
 
     // Remove token from old tile
     path.at(index)->setOccupant(nullptr);
