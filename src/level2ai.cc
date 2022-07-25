@@ -36,14 +36,6 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
     vector<pair<int, pair<size_t, size_t>>> weightedMovelist 
         = assignPriorities(movelist,gameState);
 
-    // first loop: find the highest priority
-    // int maxWeight = weightedMovelist.at(0).first;
-    // for (const auto x: weightedMovelist) {
-    //     if (maxWeight < x.first) {
-    //         maxWeight = x.first;
-    //     }
-    // }
-
     int maxWeight = weightedMovelist.at(0).first;
     maxWeight = max_element(weightedMovelist.begin(), weightedMovelist.end(), 
         [](const pair<int, pair<size_t, size_t>> &a, const pair<int, pair<size_t, size_t>> &b) {
