@@ -64,15 +64,11 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
 
 vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities( 
     const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
-    // Level 2: an AI that slightly favours certain beneficial moves over others.
+    // Level 2: an AI that slightly favours beneficial moves over others.
     // This is the order of preference: (highest to lowest priority)
     // 1. Most strongly favours moves that end the current token's run. +4 
-    // 2. Favour moves that land on a rosette. +3
-    // 3. Favour moves that steal someone else’s token. +2 
-    // 4. Favour moves that land on a lucky tile. +1 
-    // 5. Avoid moves that land on tornado. -1
-    // 6. Avoid moves that land on black hole. -2
-    // 7. Neutral to moves otherwise. +0
+    // 2. Favour moves that steal someone else’s token. +2 
+    // 3. Neutral to moves otherwise. +0
     
     vector<pair<int, pair<size_t, size_t>>> weightMovePairs;
     const vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
@@ -82,7 +78,7 @@ vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities(
         weightMovePairs.emplace_back(0, x);
     }
     
-    // assign weight 1 to item 3, weight 2 to item 2, weight 3 to item 1
+    // assign weights
     for (auto &weightAndMove : weightMovePairs) {
         Token *token = tokens.at(weightAndMove.second.first);
         size_t newIndex = token->getPathProgress() + weightAndMove.second.second - 1;
@@ -90,25 +86,12 @@ vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities(
         if (newIndex == path.size()) {
             weightAndMove.first += 4;
         }
-        // item 2,3,4 (exclusive with item 1) but not each other
-        else {
-            path.at(newIndex)->acceptVisitor(*this); // sets 
-            weightAndMove.first += getTileScore();
+        // item 2 (exclusive with item 1) 
+        else if (path.at(newIndex)->getOccupant()) {
+            weightAndMove.first += 2;
         }
     }
     return weightMovePairs;
 }
 
 
-// level 2 AI visitor implementations - knows how to check tiles
-void Level2AI::visitTileTornado(const TileTornado& t) { setTileScore(-1 + valueOfOccupant(t)); }
-void Level2AI::visitTileBlackHole(const TileBlackHole& t) { setTileScore(-2 + valueOfOccupant(t)); }
-void Level2AI::visitTileLucky(const TileLucky& t) { setTileScore(1 + valueOfOccupant(t)); }
-void Level2AI::visitTileRosette(const TileRosette& t) { setTileScore(3 + valueOfOccupant(t)); }
-void Level2AI::visitTileBasic(const TileBasic& t) { setTileScore(0 + valueOfOccupant(t)); }
-void Level2AI::visitTileNull(const TileNull& t) { setTileScore(0); }
-
-int Level2AI::valueOfOccupant(const Tile& t) {
-    if (t.getOccupant()) return 2;
-    return 0;
-}
