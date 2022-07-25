@@ -21,6 +21,12 @@ bool Token::activateCapture() {
 bool Token::isValidMove(int diceroll, int flexroll, int move) const {
     return checkValid(diceroll, flexroll, move);
 }
+std::vector<size_t> Token::validMoveDists(int diceRoll, int flexRoll) const {
+    std::vector<size_t> v;
+    v.emplace_back(static_cast<size_t>(diceRoll));
+    return v;
+}
+
 void Token::activatePassive(std::vector<Tile*>& path) {
     passiveAbility(path);
 }
@@ -55,6 +61,10 @@ void Token::setIsProtected(bool isProtected) {
 }
 bool Token::getManualAvailable() const {
     return manualIsAvailable();
+}
+
+std::vector<size_t> Token::getValidMoveDistances(int diceRoll, int flexRoll) const {
+    return validMoveDists(diceRoll, flexRoll);
 }
 
 Token::Token(size_t playerId, size_t id, size_t row, size_t col, size_t pathProgress):

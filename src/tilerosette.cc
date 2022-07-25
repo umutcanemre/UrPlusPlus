@@ -1,7 +1,7 @@
 #include "tilerosette.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileRosette::acceptVisitor(GameViewer& g) const {
+void TileRosette::acceptVisitor(EntityVisitor& g) const {
     g.visitTileRosette(*this);
 }
 

@@ -13,13 +13,14 @@ class Tile {
     // Returns true if movable
     virtual bool specialCheck();
 
-    // NVI for onMoveSuccess
+    // NVI functions
     virtual bool doOnMoveSuccess(Token*, const std::vector<Tile*> &path);
 
   public:
     bool tileAvailable(Token*);
 
-    // returns false if we should advance to next player's turn
+    // returns false if we should advance to next player's turn and 
+    // executes the functionality needed before advancing to next turn
     bool onMoveSuccess(Token*, const std::vector<Tile*> &path);
 
     Tile(size_t row, size_t col);
@@ -30,7 +31,7 @@ class Tile {
 
 
 
-    virtual void acceptVisitor(GameViewer&) const = 0;
+    virtual void acceptVisitor(EntityVisitor&) const = 0;
     virtual ~Tile();
 };
 

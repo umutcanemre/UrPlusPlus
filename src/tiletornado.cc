@@ -1,7 +1,8 @@
 #include "tiletornado.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TileTornado::acceptVisitor(GameViewer& g) const {
+
+void TileTornado::acceptVisitor(EntityVisitor& g) const {
     g.visitTileTornado(*this);
 }
 

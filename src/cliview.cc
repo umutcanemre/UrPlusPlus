@@ -6,14 +6,6 @@
 #include "gamestate.h"
 #include "token.h"
 #include "tile.h"
-// #include "tile.h"
-// #include "tilebasic.h"
-// #include "tileblackhole.h"
-// #include "tileend.h"
-// #include "tilelucky.h"
-// #include "tilerosette.h"
-// #include "tilestart.h"
-// #include "tiletornado.h"
 
 #include "tokenbasic.h"
 #include "tokenassassin.h"
@@ -177,13 +169,6 @@ void CLIView::doNotify(const GameState& g) {
     }
 }
 
-void CLIView::visitTileStart(const TileStart& t) {
-    (*out) << 'S';
-}
-
-void CLIView::visitTileEnd(const TileEnd& t) {
-    (*out) << 'E';
-}
 
 void CLIView::visitTileTornado(const TileTornado& t) {
     (*out) << 'T';

@@ -41,5 +41,4 @@ std::pair<size_t, size_t> Tile::getPosition() const {
 }
 
 
-
 Tile::~Tile() {}

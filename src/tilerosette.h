@@ -3,10 +3,11 @@
 #include "tile.h"
 
 class TileRosette : public Tile {
+    // NVI overrides
     bool specialCheck() override;
     bool doOnMoveSuccess(Token*, const std::vector<Tile*> &path) override;
   public:
-    void acceptVisitor(GameViewer&) const override;
+    void acceptVisitor(EntityVisitor&) const override;
     TileRosette(size_t row, size_t col);
 };
 

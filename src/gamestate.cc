@@ -112,15 +112,17 @@ void GameState::skipTurn() {
     moveToNextPlayerTurn();
 }
 
-bool GameState::moveValid(size_t tokenId, size_t distance) {
-    if (distance == 0) {
+bool GameState::moveValid(size_t tokenId, size_t distance) const {
+    if (distance == 0) { // if player tries to move distance 0, this is invalid
         return false;
     }
     Token* movingToken = board->playersTokens.at(playerTurn).at(tokenId).get();
+    // if player tries to make a move that is not a valid distance for this token return false
     if (!movingToken->isValidMove(diceroll, flexdiceroll, distance)) {
         return false;
     }
     size_t newIndex = movingToken->getPathProgress() + distance - 1;
+    // if player tries to move out of bounds return false
     if (board->paths.at(playerTurn).size() < newIndex) {
         // Out of bounds move
         return false;
@@ -134,6 +136,7 @@ bool GameState::moveValid(size_t tokenId, size_t distance) {
         return true;
     }
     Tile* newTile = board->paths.at(playerTurn).at(newIndex);
+    // if the next tile is not available return false
     if (!newTile->tileAvailable(movingToken)) {
         return false;
     }

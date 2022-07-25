@@ -1,12 +1,21 @@
 
 #include "tokenspeedster.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
 bool TokenSpeedster::checkValid(int diceroll, int flexroll, int move) const {
-    if (uses > 0) {
+    if (manualIsAvailable()) {
         return move == diceroll || move == diceroll + 1;
     } // else
     return move == diceroll;
+}
+
+std::vector<size_t> TokenSpeedster::validMoveDists(int diceRoll, int flexRoll) const {
+    std::vector<size_t> v;
+    v.emplace_back(static_cast<size_t>(diceRoll));
+    if (manualIsAvailable()) {
+        v.emplace_back(static_cast<size_t>(diceRoll + 1));
+    }
+    return v;
 }
 
 void TokenSpeedster::manualAbility() {
@@ -19,7 +28,7 @@ bool TokenSpeedster::manualIsAvailable() const {
     return false;
 }
 
-void TokenSpeedster::acceptVisitor(GameViewer& g) const {
+void TokenSpeedster::acceptVisitor(EntityVisitor& g) const {
     g.visitTokenSpeedster(*this);
 }
 

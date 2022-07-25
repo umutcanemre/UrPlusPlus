@@ -1,12 +1,12 @@
 #include "tokenassassin.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
 
 bool TokenAssassin::captureAbility() {
     return true;
 }
 
-void TokenAssassin::acceptVisitor(GameViewer& g) const {
+void TokenAssassin::acceptVisitor(EntityVisitor& g) const {
     g.visitTokenAssassin(*this);
 }
 

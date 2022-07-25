@@ -1,8 +1,8 @@
 
 #include "tokenbasic.h"
-#include "gameviewer.h"
+#include "entityvisitor.h"
 
-void TokenBasic::acceptVisitor(GameViewer& g) const {
+void TokenBasic::acceptVisitor(EntityVisitor& g) const {
     g.visitTokenBasic(*this);
 }
 

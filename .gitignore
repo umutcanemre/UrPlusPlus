@@ -34,3 +34,6 @@
 
 # vscode workflow
 .vscode
+
+# OS-specific files
+.DS_Store

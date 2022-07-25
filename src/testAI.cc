@@ -7,7 +7,8 @@
 #include "player.h"
 #include "human.h"
 #include "level1ai.h"
-#include "level2ai.h" 
+#include "level2ai.h"
+#include "level3ai.h"
 
 using namespace std;
 
@@ -22,7 +23,6 @@ int main() {
     // Human gamer2{&cin, &cout};
     // Level1AI gamer2{};
     Level2AI gamer2{};
-    // Level3AI gamer2{};
 
     Controller game{&state, {&gamer1, &gamer2}};
 
