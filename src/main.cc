@@ -19,9 +19,9 @@ int main() {
     cin >> state;
 
     Human gamer1{&cin, &cout};
-    // Human gamer2{&cin, &cout};
+    Human gamer2{&cin, &cout};
     // Level1AI gamer2{};
-    Level2AI gamer2{};
+    // Level2AI gamer2{};
     // Level3AI gamer2{};
 
     Controller game{&state, {&gamer1, &gamer2}};
@@ -31,5 +31,5 @@ int main() {
     while (!state.gameIsOver()) {
         game.makePlayerTurn();
     }
-
+    
 }

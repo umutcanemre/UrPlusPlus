@@ -12,7 +12,7 @@ bool TileRosette::specialCheck() {
     return true;
 }
 
-bool TileRosette::doOnMoveSuccess(Token*, const std::vector<Tile*> &path) {
+bool TileRosette::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
     // indicate we should repeat turn
     return true;
 }

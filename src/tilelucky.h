@@ -3,6 +3,8 @@
 #include "tile.h"
 
 class TileLucky : public Tile {
+    bool doOnMoveSuccess(Token*, const std::vector<Tile*> &path) override;
+    size_t generateRandomResult();
   public:
     void acceptVisitor(EntityVisitor&) const override;
     TileLucky(size_t row, size_t col);

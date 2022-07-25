@@ -156,6 +156,17 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         return false;
     }
     Token* movingToken = playerTokens.at(tokenId).get();
+
+    // Tile/token ability updates/checks
+    if (diceroll + 1 == distance) {
+        // Activate speedster ability
+        // Note that in the case that we are using a flexible
+        // diceroll that happens to be equal to diceroll + 1
+        // It will just call activate manual on flexible which
+        // is harmless
+        movingToken->activateManual();
+    }
+
     // Calculating old path progress causes issues when pathprogress = 0
     size_t oldPathProgress = movingToken->getPathProgress();
     Tile* oldTile = (oldPathProgress == 0) ? nullptr : board->paths.at(playerTurn).at(oldPathProgress - 1);
@@ -171,18 +182,6 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         // Reached end- no need to check for capture,
         // Don't update new tile
         movingToken->updatePosition(std::make_pair(0, 0), movingToken->getPathProgress() + distance);
-
-        bool playerWon = true;
-        for (auto token : board->getPlayersTokens().at(playerTurn)) {
-            if (token->getPathProgress() - 1 != board->paths.at(playerTurn).size()) {
-                playerWon = false;
-                break;
-            }
-        }
-        if (playerWon) {
-            winnerPlayer = playerTurn;
-            return true;
-        }
     } else {
         Tile* newTile = board->paths.at(playerTurn).at(oldPathProgress - 1 + distance);
         if (newTile->getOccupant() != nullptr) {
@@ -205,14 +204,17 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
         tileTurnRepeat = newTile->onMoveSuccess(movingToken, board->paths.at(playerTurn));
     }
 
-    // Tile/token ability updates/checks
-    if (diceroll + 1 == distance) {
-        // Activate speedster ability
-        // Note that in the case that we are using a flexible
-        // diceroll that happens to be equal to diceroll + 1
-        // It will just call activate manual on flexible which
-        // is harmless
-        movingToken->activateManual();
+    // Check for winner
+    bool playerWon = true;
+    for (auto token : board->getPlayersTokens().at(playerTurn)) {
+        if (token->getPathProgress() - 1 != board->paths.at(playerTurn).size()) {
+            playerWon = false;
+            break;
+        }
+    }
+    if (playerWon) {
+        winnerPlayer = playerTurn;
+        return true;
     }
 
     if (captureTurnRepeat  || tileTurnRepeat) {
