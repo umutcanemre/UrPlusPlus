@@ -16,10 +16,8 @@ bool TileTornado::doOnMoveSuccess(Token* t, const std::vector<Tile*> &path) {
     std::binomial_distribution<> d(4, 0.5);
     size_t randomResult = static_cast<size_t>(d(gen));
 
-    if (index != 0) {
-        // Remove token from old tile
-        path.at(index)->setOccupant(nullptr);
-    }
+    // Remove token from old tile
+    path.at(index)->setOccupant(nullptr);
 
     if (randomResult % 2 == 0) {
         // Even roll onto tile- move forward
