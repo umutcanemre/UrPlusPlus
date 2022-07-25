@@ -29,7 +29,6 @@ class AIMadeInvalidMoveException : public std::exception {
     char *what();
 };
 
-//////////////////////////////////////// I like having them in the same file for now //////////////////////////////////////
 class AI : public Player, public EntityVisitor {
     int visitedTileScore = 0;
     int visitedTokenScore = 0;
@@ -44,12 +43,13 @@ class AI : public Player, public EntityVisitor {
     void setTileScore(int);
     int getTileScore() const;
     
-    static bool moveIsNotRepeated(std::vector<std::pair<size_t, size_t>>, size_t tokenId, size_t rollNum);
+    static bool moveIsNotRepeated(const 
+      std::vector<std::pair<size_t, size_t>> &, size_t tokenId, size_t rollNum);
     // returns a tokenId and distance pair
     std::vector<std::pair<size_t, size_t>> findAllValidMoves(const GameState&) const;
     // returns the tokenID and distance pairs with a weight assigned to each and sorted in order of weight
     virtual std::vector<std::pair<int, std::pair<size_t, size_t>>> 
-    assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&);
+    assignPriorities(const std::vector<std::pair<size_t, size_t>> &, const GameState&);
     // findMove algorithm for each of the AIs
     virtual std::pair<size_t, size_t> findMove(const GameState&) = 0;
   public:

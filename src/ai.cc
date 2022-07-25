@@ -6,7 +6,6 @@
 
 #include "ai.h"
 #include "gamestate.h"
-// The imports exclusive to AI
 #include "token.h"
 #include "tokenassassin.h"
 #include "tokenbasic.h"
@@ -60,9 +59,9 @@ vector<pair<size_t, size_t>> AI::findAllValidMoves(const GameState& gameState) c
     size_t flexRoll = gameState.getFlexDiceRoll();
 
     
-    for (auto x : myTokens) {
+    for (const auto &x : myTokens) {
         vector<size_t> movesOfX = x->getValidMoveDistances(diceRoll, flexRoll);
-        for (auto y : movesOfX) {
+        for (const auto &y : movesOfX) {
             if (gameState.moveValid(x->getTokenId(), y) && 
                     moveIsNotRepeated(validMoves, x->getTokenId(), y)) {
                 validMoves.emplace_back(make_pair(x->getTokenId(), y));
@@ -73,7 +72,7 @@ vector<pair<size_t, size_t>> AI::findAllValidMoves(const GameState& gameState) c
     return validMoves;
 }
 
-bool AI::moveIsNotRepeated(vector<pair<size_t, size_t>> validMoves, size_t tokenId, size_t rollNum) {
+bool AI::moveIsNotRepeated(const vector<pair<size_t, size_t>> &validMoves, size_t tokenId, size_t rollNum) {
     // tokenId is tokenId, rollNum is either diceRoll or flexDiceRoll
     // returns true if <tokenId, rollNum> is unique in validMoves (no occurrences yet)
     return (find_if(validMoves.begin(), validMoves.end(), [tokenId,rollNum](pair<size_t, size_t> move) {
@@ -82,14 +81,14 @@ bool AI::moveIsNotRepeated(vector<pair<size_t, size_t>> validMoves, size_t token
 }
 
 vector<pair<int, pair<size_t, size_t>>> AI::assignPriorities( 
-    vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
+    const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
     // Level 1 and Default AI implementation: an AI that randomly chooses a move that is valid with no preference
     // no priorities are needed to be assigned
-    vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
-    for (auto x : movelist) {
-        movesAndWeights.emplace_back(0, x);
+    vector<pair<int, pair<size_t, size_t>>> weightMovePairs;
+    for (const auto &x : movelist) {
+        weightMovePairs.emplace_back(0, x);
     }
-    return movesAndWeights;
+    return weightMovePairs;
 }
 
 

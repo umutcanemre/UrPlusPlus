@@ -13,11 +13,10 @@ class Player {
     virtual void makeDiceRoll(GameState&) const = 0;
     virtual void determineAndMakeMove(GameState&) = 0;
     virtual void skipTurn(GameState&) const = 0;
-
+  protected:
+    size_t getPlayerId() const;
   public:
     Player();
-    size_t getPlayerId() const;
-    // void setPlayerId(size_t);
     void playTurn(GameState&);
     virtual ~Player();
 };

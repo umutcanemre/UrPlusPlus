@@ -34,11 +34,12 @@ pair<size_t, size_t> Level3AI::findMove(const GameState &gameState) {
 
     // first loop: find the highest priority
     int maxWeight = weightedMovelist.at(0).first;
-    for (auto x: weightedMovelist) {
-        if (maxWeight < x.first) {
-            maxWeight = x.first;
+    maxWeight = max_element(weightedMovelist.begin(), weightedMovelist.end(), 
+        [](const pair<int, pair<size_t, size_t>> &a, const pair<int, pair<size_t, size_t>> &b) {
+            return (a.first < b.first);
         }
-    }
+    )->first;
+    
     // if there are multiple moves with the same weight I should randomly generate which move to pick, 
     // because I do not want it to pick the first one in order every single time - it would just end 
     // up moving the same token every time when there are multiple of the same weight and random
@@ -51,13 +52,14 @@ pair<size_t, size_t> Level3AI::findMove(const GameState &gameState) {
     }
 
     size_t index = static_cast<size_t>(rand() % candidates.size());
-    cout << candidates.at(index).first << candidates.at(index).second.first 
-        << candidates.at(index).second.second << endl;
+    cout << "Selected move: " << candidates.at(index).first << 
+        candidates.at(index).second.first << 
+        candidates.at(index).second.second << endl;
     return candidates.at(index).second;
 }
 
 vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities( 
-    vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
+    const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
     // Level 3: an AI that favours certain beneficial moves over others and also is capable
     // of using abilities at the right times. This includes:
 
@@ -76,21 +78,21 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
     // 3. Favour moves that steal someone else’s token. 
     // 4. Avoid moves that land on black holes.
 
-    vector<pair<int, pair<size_t, size_t>>> movesAndWeights;
+    vector<pair<int, pair<size_t, size_t>>> weightMovePairs;
     const vector<Tile*> playerPath = gameState.getPlayersPaths().at(getPlayerId());
-    vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
+    vector<Token*> myTokens = gameState.getPlayersTokens().at(getPlayerId());
 
-    for (auto x : movelist) {
-        movesAndWeights.emplace_back(0, x);
+    for (const auto &x : movelist) {
+        weightMovePairs.emplace_back(0, x);
     }
     
     // assign weight 1 to item 3, weight 2 to item 2, weight 3 to item 1
-    for (auto &x : movesAndWeights) {
-        Token *token = tokens.at(x.second.first);
-        size_t newIndex = token->getPathProgress() + x.second.second - 1;
+    for (auto &weightAndMove : weightMovePairs) {
+        Token *token = myTokens.at(weightAndMove.second.first);
+        size_t newIndex = token->getPathProgress() + weightAndMove.second.second - 1;
         // item 1 - end of path is reached
         if (newIndex == playerPath.size()) {
-            x.first += 4;
+            weightAndMove.first += 4;
         }
         // item 2,3,4 (exclusive with item 1) but not each other
         else {
@@ -99,10 +101,10 @@ vector<pair<int, pair<size_t, size_t>>> Level3AI::assignPriorities(
                 const vector<Tile*> opponentPath = gameState.getPlayersPaths().at(occupant->getPlayerId());
             }
             playerPath.at(newIndex)->acceptVisitor(*this); // sets 
-            x.first += getTileScore();
+            weightAndMove.first += getTileScore();
         }
     }
-    return movesAndWeights;
+    return weightMovePairs;
 
 }
 

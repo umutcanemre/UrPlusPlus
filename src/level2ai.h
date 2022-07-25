@@ -17,10 +17,10 @@ class TileNull;
 
 
 class Level2AI : public AI {
-    int valueOfPiece(const Tile&);
+    int valueOfOccupant(const Tile&);
   protected:
-    std::vector<std::pair<int, std::pair<size_t, size_t>>> 
-    assignPriorities(std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
+    std::vector<std::pair<int, std::pair<size_t, size_t>>> assignPriorities(
+      const std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
     std::pair<size_t, size_t> findMove(const GameState&) override;
   public:
     void visitTileTornado(const TileTornado&) override;

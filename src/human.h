@@ -1,8 +1,6 @@
 #ifndef URPLUSPLUS_HUMAN_H_
 #define URPLUSPLUS_HUMAN_H_
 
-// for now, all player-related classes are in the same header file
-
 #include <vector>
 #include "gamestate.h"
 #include "player.h"
