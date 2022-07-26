@@ -21,9 +21,15 @@ bool Tile::tileAvailable(Token* t) {
         // Tile ability states move is invalid
         return false;
     }
-    if ((getOccupant() != nullptr) && (t->getPlayerId() == getOccupant()->getPlayerId())) {
-        // Tile is occupied by token on same team
-        return false;
+    if (getOccupant() != nullptr) {
+        if (t->getPlayerId() == getOccupant()->getPlayerId()) {
+            // Tile is occupied by token on same team
+            return false;
+        }
+        if (getOccupant()->getIsProtected()) {
+            // Token is protected
+            return false;
+        }
     }
     return true;
 }
