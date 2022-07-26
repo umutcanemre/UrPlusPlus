@@ -18,7 +18,7 @@ class TileNull;
 
 class Level2AI : public AI {
   protected:
-    std::vector<std::pair<int, std::pair<size_t, size_t>>> assignPriorities(
+    std::vector<std::pair<float, std::pair<size_t, size_t>>> assignPriorities(
       const std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
     std::pair<size_t, size_t> findMove(const GameState&) override;
   public:

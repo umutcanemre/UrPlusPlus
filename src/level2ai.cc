@@ -33,12 +33,12 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
     // pre: there is at least 1 valid move, so movelist.length should be >= 1 or something is wrong
     // with my code
     vector<pair<size_t, size_t>> movelist = findAllValidMoves(gameState);
-    vector<pair<int, pair<size_t, size_t>>> weightedMovelist 
+    vector<pair<float, pair<size_t, size_t>>> weightedMovelist 
         = assignPriorities(movelist,gameState);
 
     int maxWeight = weightedMovelist.at(0).first;
     maxWeight = max_element(weightedMovelist.begin(), weightedMovelist.end(), 
-        [](const pair<int, pair<size_t, size_t>> &a, const pair<int, pair<size_t, size_t>> &b) {
+        [](const pair<float, pair<size_t, size_t>> &a, const pair<float, pair<size_t, size_t>> &b) {
             return (a.first < b.first);
         }
     )->first;
@@ -56,13 +56,10 @@ pair<size_t, size_t> Level2AI::findMove(const GameState& gameState) {
 
     size_t index = static_cast<size_t>(rand() % candidates.size());
 
-    cout << "Selected move: " << candidates.at(index).first << 
-        candidates.at(index).second.first << 
-        candidates.at(index).second.second << endl;
     return candidates.at(index).second;
 }
 
-vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities( 
+vector<pair<float, pair<size_t, size_t>>> Level2AI::assignPriorities( 
     const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
     // Level 2: an AI that slightly favours beneficial moves over others.
     // This is the order of preference: (highest to lowest priority)
@@ -70,7 +67,7 @@ vector<pair<int, pair<size_t, size_t>>> Level2AI::assignPriorities(
     // 2. Favour moves that steal someone else’s token. +2 
     // 3. Neutral to moves otherwise. +0
     
-    vector<pair<int, pair<size_t, size_t>>> weightMovePairs;
+    vector<pair<float, pair<size_t, size_t>>> weightMovePairs;
     const vector<Tile*> path = gameState.getPlayersPaths().at(getPlayerId());
     vector<Token*> tokens = gameState.getPlayersTokens().at(getPlayerId());
 

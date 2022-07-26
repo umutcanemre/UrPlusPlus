@@ -27,14 +27,11 @@ void GameState::recalculatePassive() {
 }
 
 void GameState::rollDice() {
-    // std::random_device rd;
-    // std::mt19937 gen(rd());
-    // std::binomial_distribution<> d(4, 0.5);
-    // flexdiceroll = static_cast<size_t>(d(gen));
-    // diceroll = static_cast<size_t>(d(gen));
-
-    diceroll = 1;
-    flexdiceroll = 1;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::binomial_distribution<> d(4, 0.5);
+    flexdiceroll = static_cast<size_t>(d(gen));
+    diceroll = static_cast<size_t>(d(gen));
 
     // Recalculate passive before checking move validity
     recalculatePassive();
