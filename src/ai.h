@@ -30,25 +30,25 @@ class AIMadeInvalidMoveException : public std::exception {
 };
 
 class AI : public Player, public EntityVisitor {
-    int visitedTileScore = 0;
-    int visitedTokenScore = 0;
+    float visitedTileScore = 0;
+    float visitedTokenScore = 0;
 
     void makeDiceRoll(GameState&) const override;
     void determineAndMakeMove(GameState&) override;
     void skipTurn(GameState&) const override;
 
   protected:
-    void setTokenScore(int);
-    int getTokenScore() const;
-    void setTileScore(int);
-    int getTileScore() const;
+    void setTokenScore(float);
+    float getTokenScore() const;
+    void setTileScore(float);
+    float getTileScore() const;
     
     static bool moveIsNotRepeated(const 
       std::vector<std::pair<size_t, size_t>> &, size_t tokenId, size_t rollNum);
     // returns a tokenId and distance pair
     std::vector<std::pair<size_t, size_t>> findAllValidMoves(const GameState&) const;
     // returns the tokenID and distance pairs with a weight assigned to each and sorted in order of weight
-    virtual std::vector<std::pair<int, std::pair<size_t, size_t>>> 
+    virtual std::vector<std::pair<float, std::pair<size_t, size_t>>> 
     assignPriorities(const std::vector<std::pair<size_t, size_t>> &, const GameState&);
     // findMove algorithm for each of the AIs
     virtual std::pair<size_t, size_t> findMove(const GameState&) = 0;

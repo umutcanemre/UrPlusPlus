@@ -24,13 +24,16 @@ class TokenSupporter;
 
 
 class Level4AI : public AI {
-    bool tileRollsDice = false;
-    bool tileRepeatsTurn = false;
-    bool tileGrantsInvulnerability = false;
+    // bool tileRollsDice = false;
+    // bool tileRepeatsTurn = false;
+    // bool tileGrantsInvulnerability = false;
     float tileAvgMoveDist = 0;
-    vector<Tile*> opponentPath;
+    std::vector<std::vector<Tile*>> allPathsOnBoard;
+    char tokenId = 'B';
+    char tileId = 'O';
+    bool isTileOnSharedPath(const std::pair<size_t, size_t>&);
   protected:
-    std::vector<std::pair<int, std::pair<size_t, size_t>>> assignPriorities(
+    std::vector<std::pair<float, std::pair<size_t, size_t>>> assignPriorities(
       const std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
     std::pair<size_t, size_t> findMove(const GameState&) override;
   public:

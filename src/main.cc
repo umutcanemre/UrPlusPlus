@@ -9,6 +9,7 @@
 #include "level1ai.h"
 #include "level2ai.h" 
 #include "level3ai.h" 
+#include "level4ai.h" 
 
 using namespace std;
 
@@ -20,10 +21,11 @@ int main() {
     cin >> state;
 
     Human gamer1{&cin, &cout};
-    Human gamer2{&cin, &cout};
+    // Human gamer2{&cin, &cout};
     // Level1AI gamer2{};
     // Level2AI gamer2{};
     // Level3AI gamer2{};
+    Level4AI gamer2{};
 
     Controller game{&state, {&gamer1, &gamer2}};
 

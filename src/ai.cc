@@ -80,11 +80,11 @@ bool AI::moveIsNotRepeated(const vector<pair<size_t, size_t>> &validMoves, size_
             }) == validMoves.end());
 }
 
-vector<pair<int, pair<size_t, size_t>>> AI::assignPriorities( 
+vector<pair<float, pair<size_t, size_t>>> AI::assignPriorities( 
     const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
     // Level 1 and Default AI implementation: an AI that randomly chooses a move that is valid with no preference
     // no priorities are needed to be assigned
-    vector<pair<int, pair<size_t, size_t>>> weightMovePairs;
+    vector<pair<float, pair<size_t, size_t>>> weightMovePairs;
     for (const auto &x : movelist) {
         weightMovePairs.emplace_back(0, x);
     }
@@ -92,10 +92,10 @@ vector<pair<int, pair<size_t, size_t>>> AI::assignPriorities(
 }
 
 
-void AI::setTokenScore(int v) { visitedTokenScore = v; }
-int AI::getTokenScore() const { return visitedTokenScore; }
-void AI::setTileScore(int v) { visitedTileScore = v; }
-int AI::getTileScore() const { return visitedTileScore; }
+void AI::setTokenScore(float v) { visitedTokenScore = v; }
+float AI::getTokenScore() const { return visitedTokenScore; }
+void AI::setTileScore(float v) { visitedTileScore = v; }
+float AI::getTileScore() const { return visitedTileScore; }
 
 // default visitor implementations - do nothing 
 void AI::visitTileTornado(const TileTornado&) {}
