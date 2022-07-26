@@ -52,9 +52,6 @@ pair<size_t, size_t> Level4AI::findMove(const GameState &gameState) {
     }
 
     size_t index = static_cast<size_t>(rand() % candidates.size());
-    // cout << "Selected move: " << candidates.at(index).first << 
-    //     candidates.at(index).second.first << 
-    //     candidates.at(index).second.second << endl;
     return candidates.at(index).second;
 }
 
@@ -259,7 +256,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                 }
             }
         }
-
+        // if you want to view the weights and all possible moves:
         // cout << "Weight " << weightAndMove.first << ": Token " << weightAndMove.second.first 
         //     << ", distance " << weightAndMove.second.second << endl;
     }
