@@ -21,7 +21,6 @@ void GameState::recalculatePassive() {
             board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
         }
     }
-
 }
 
 void GameState::rollDice() {
