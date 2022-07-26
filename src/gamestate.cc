@@ -13,6 +13,17 @@ char* InvalidWinnerException::what() {
     return "No winner exists yet";
 }
 
+void GameState::recalculatePassive() {
+    // Activate passive abilities for all players
+    // This is necessasry in the case we start on an opposite player's turn
+    for (size_t i = 0; i < board->playerCount; ++i) {
+        for (size_t j = 0; j < board->playersTokens.at(playerTurn).size(); ++j) {
+            board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
+        }
+    }
+
+}
+
 void GameState::rollDice() {
     // std::random_device rd;
     // std::mt19937 gen(rd());
@@ -23,6 +34,9 @@ void GameState::rollDice() {
     diceroll = 1;
     flexdiceroll = 1;
 
+    // Recalculate passive before checking move validity
+    recalculatePassive();
+    
     // Check if a valid move exists
     for (size_t i = 0; i < board->playersTokens.at(playerTurn).size(); ++i) {
         if (moveValid(i, diceroll) || moveValid(i, diceroll + 1)
@@ -152,6 +166,10 @@ bool GameState::movePiece(size_t tokenId, size_t distance) {
     }) == playerTokens.end()) {
         return false;
     }
+
+    // Recalculate passive before checking move validity
+    recalculatePassive();
+
     if (!moveValid(tokenId, distance)) {
         return false;
     }

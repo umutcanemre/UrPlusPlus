@@ -29,6 +29,7 @@ class GameState {
     std::unique_ptr<Board> board;
     void moveToNextPlayerTurn();
     void repeatPlayerTurn();
+    void recalculatePassive();
   public:
     GameState();
     void rollDice();
