@@ -5,12 +5,12 @@
 #include "gamestate.h"
 #include "board.h"
 
-char* InvalidGameStateOperation::what() {
-    return "Illegal Operation";
+const char* InvalidGameStateOperation::what() {
+    return message.c_str();
 }
 
-char* InvalidWinnerException::what() {
-    return "No winner exists yet";
+const char* InvalidWinnerException::what() {
+    return message.c_str();
 }
 
 void GameState::recalculatePassive() {
@@ -18,7 +18,10 @@ void GameState::recalculatePassive() {
     // This is necessasry in the case we start on an opposite player's turn
     for (size_t i = 0; i < board->playerCount; ++i) {
         for (size_t j = 0; j < board->playersTokens.at(playerTurn).size(); ++j) {
-            board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
+            Token* t = board->playersTokens.at(i).at(j).get();
+            if (t->getPathProgress() != 0) {
+                board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
+            }
         }
     }
 }
@@ -35,7 +38,7 @@ void GameState::rollDice() {
 
     // Recalculate passive before checking move validity
     recalculatePassive();
-    
+
     // Check if a valid move exists
     for (size_t i = 0; i < board->playersTokens.at(playerTurn).size(); ++i) {
         if (moveValid(i, diceroll) || moveValid(i, diceroll + 1)
@@ -112,6 +115,10 @@ std::istream& operator>>(std::istream& in, GameState& g) {
         // maybe a different exception
         throw BoardParseException{};
     }
+
+
+    // fix edge case of passive abilities not activating off the bat
+    g.recalculatePassive();
 
     return in;
 }

@@ -18,8 +18,8 @@
 
 using namespace std;
 
-char* BoardParseException::what() {
-    return "Board parsing error";
+const char* BoardParseException::what() {
+    return message.c_str();
 }
 
 const vector<vector<Tile*>>& Board::getGameMap() const {
@@ -213,6 +213,10 @@ istream& operator>>(istream& in, Board& b) {
             if (row == -1 && col == -1) {
                 pathDist = 0;
             }
+            // special input for off the board and complete
+            else if (row == -2 && col == -2) {
+                pathDist = pathsCoords[0].size() + 1;
+            }
             else if (row < 0 || col < 0) {
                 throw BoardParseException();
             }
@@ -261,7 +265,7 @@ istream& operator>>(istream& in, Board& b) {
             }
 
             // set occupant of tile
-            if (pathDist > 0) {
+            if (pathDist > 0 && pathDist < pathsCoords[0].size() + 1) {
                 Tile& tile = *b.gameMap[tCoord.first][tCoord.second];
                 // token already on this tile
                 if (tile.getOccupant()) {
