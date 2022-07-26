@@ -30,9 +30,6 @@ void GameState::rollDice() {
     flexdiceroll = static_cast<size_t>(d(gen));
     diceroll = static_cast<size_t>(d(gen));
 
-    // diceroll = 1;
-    // flexdiceroll = 1;
-
     // Recalculate passive before checking move validity
     recalculatePassive();
     
