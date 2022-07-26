@@ -129,11 +129,9 @@ void GUIView::drawInfoTokens(const std::vector<std::vector<Token*>>& playersToke
 
     for (size_t i = 0; i < Board::playerCount; ++i) {
         auto & playerTokens = playersTokens[i];
-        // (*out) << "Player " << i << "'s " << info <<  " tokens: ";
         for (const auto & t : playerTokens) {
             if (pred(t)) {
                 t->acceptVisitor(*this);
-                // (*out) << getTokenChar(*t) << ' ';
                 xPos += incXY.first;
                 yPos += incXY.second;
             }
@@ -166,7 +164,6 @@ void GUIView::doNotify(const GameState& state) {
 
     // draw the paths
     for (size_t i = 0; i < state.getPlayersPaths().size(); ++i) {
-        // std::cout << "drawing path: " << i << std::endl;
         drawPath(state.getBoard(), state.getPlayersPaths()[i], i);
     }
 
@@ -198,7 +195,6 @@ void GUIView::doNotify(const GameState& state) {
     Colour playerColour = getTokenColour(*state.getPlayersTokens()[turn][0]);
     if (state.requiresDiceRoll()) {
         drawHeader("Needs to roll dice!", diceHeaderXY, playerColour);
-        // (*out) << "Needs to roll dice!" << std::endl;
     } else {
         drawHeader("Dice Roll: " +
             std::to_string(state.getDiceRoll())
@@ -206,9 +202,6 @@ void GUIView::doNotify(const GameState& state) {
             + std::to_string(state.getFlexDiceRoll()),
             diceHeaderXY,
             playerColour);
-
-        // (*out) << "Dice Roll: " << g.getDiceRoll() << ", Flex Dice Roll:"
-        //     << g.getFlexDiceRoll() << std::endl;
     }
 
     screen->update();
@@ -267,7 +260,6 @@ void GUIView::visitTokenFlexible(const TokenFlexible& t) {
 }
 
 void GUIView::visitTokenSpeedster(const TokenSpeedster& t) {
-    // char playerChar = t.getPlayerId() + '0';
     if (t.getManualAvailable()) {
         drawToken("tokenspeedsterfast", t);
     }
