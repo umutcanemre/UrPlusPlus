@@ -67,9 +67,12 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     // - prefers moves that capture other tokens ✓
     // - prefers using supporter to support tokens
     // - prefers using abilities when it comes with a significant benefit: like claiming 
-    //   a shared-path rosette to gain invulnerability early-game, or completing a path 
-    // - prefers choosing the higher flexible tile move unless it moves it 2 or 3 squares 
+    //   a shared-path rosette to gain invulnerability early-game, or completing a path ✓
+    //         -- all levels of AI sort of take this into account but this one especially with 
+    //         -- adding a bonus for killing tokens with a Token with captureAbility()
+    // - prefers choosing the higher flexible tile move unless it moves it 2 or 3 squares
     //   in front of an enemy token - the opponent's most likely roll - on a shared path ✓
+    //         -- it also takes this into account for all tiles not just Flex
     // - prefers tornado if it sends player forward in the path; avoids tornado if it sends player
     //   backward in the path ✓
     // - slightly prefers lucky if it sends player forward in the path; slightly avoids lucky if 
@@ -98,22 +101,21 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     
     // assign weight 1 to item 3, weight 2 to item 2, weight 3 to item 1
     for (auto &weightAndMove : weightMovePairs) {
-        Token *token = myTokens.at(weightAndMove.second.first);
-        size_t newIndex = token->getPathProgress() + weightAndMove.second.second - 1;
+        currentToken = myTokens.at(weightAndMove.second.first);
+        size_t newIndex = currentToken->getPathProgress() + weightAndMove.second.second - 1;
 
         // item 1 - end of path is reached
         if (newIndex == playerPath.size()) {
             weightAndMove.first += 6;
         }
 
-        else {
+        else { // end of path was not reached
             Tile *tileAtMove = playerPath.at(newIndex);
-            Tile *currentTile = playerPath.at(token->getPathProgress());
+            Tile *currentTile = playerPath.at(currentToken->getPathProgress());
             // next, check the tile at the next move and see how incentivized we are to move to that tile
             // cout << "tile accept visitor" << endl;
             tileAtMove->acceptVisitor(*this); 
             weightAndMove.first += getTileScore(); // should account for all of Rosette, Lucky, BH, and Tornado
-            
             // next, see if the tile has an occupant - how incentivized are we to get the occupant?
 
             // cout << "if (tileAtMove->getOccupant()) {" << endl;
@@ -128,37 +130,42 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                 // we no longer need to use occupant's characteristics after this line
                 // do we get any benefits from getting the occupant? namely are we an Assassin?
                 // or another token with an ability that activates on capture?
-                if (token->activateCapture()) { // if has capture ability
+                if (currentToken->activateCapture()) { // if has capture ability
                     weightAndMove.first += 2;
                 }
             }
 
 
-            // after doing that, we need to consider some other cases. 
+            // after doing that, we need to consider some other cases as to what will happen
+            // after the tile lands on a tornado or black hole none of this is relevant as it will be sent to a 
+            // new location anyway
             
             // Would making this move most likely put us at risk of capture?
             // and if isAtRisk, how much do we care about this token?
             // however this is completely negated if one of the occupants behind you is the supporter or if 
 
             currentTile->acceptVisitor(*this);
-            bool currentlySupported = token->getIsProtected() || tileId=='*';
+            bool currentlySupported = currentToken->getIsProtected() || tileId=='*';
 
             bool wouldBeSupported = false;
+            bool tileMovesToken = false;
             try {
-                Tile* inFrontOfYou = playerPath.at(token->getPathProgress() - 1 + weightAndMove.second.second);
+                Tile* inFrontOfYou = playerPath.at(currentToken->getPathProgress() - 1 + weightAndMove.second.second);
                 inFrontOfYou->acceptVisitor(*this);
                 if (tileId == '*') wouldBeSupported = true;
+                else if (tileId == 'T') {wouldBeSupported = false; tileMovesToken == true;} // tile gets moved to a different place so not relevant
+                else if (tileId == 'B') continue; // black hole sends to beginning so this fails to be relevant
             } catch (out_of_range &) {
 
             }
 
             // if we already know we will be supported by a Rosette, we don't need to check Supporter protection
-            if (!wouldBeSupported) {
+            if (!wouldBeSupported && !tileMovesToken) {
                 // the supporter check
                 for (int i=1; i<4; i++) {  
                     // cout << i << endl;
                     try {
-                        Tile* behindYou = playerPath.at(token->getPathProgress() + weightAndMove.second.second - 1 - i);
+                        Tile* behindYou = playerPath.at(currentToken->getPathProgress() + weightAndMove.second.second - 1 - i);
                         if (behindYou->getOccupant()) { 
                             behindYou->getOccupant()->acceptVisitor(*this);
                         } else {
@@ -195,9 +202,9 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
 
             // check out what the current token is
-            token->acceptVisitor(*this);
+            currentToken->acceptVisitor(*this);
             if (wouldBeSupported && !currentlySupported && (tokenId == 'B' || 
-                tokenId == 'A' || (tokenId == 'S' && !token->getManualAvailable()))) {
+                tokenId == 'A' || (tokenId == 'S' && !currentToken->getManualAvailable()))) {
                 // the idea is that basic tokens are less valuable 
                 // and assassins are meant to be attackers so it will be beneficial for them to move
                 // whenever possible
@@ -214,7 +221,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             if (!currentlySupported) {
                 for (int i=2; i<4; i++) {
                     try {
-                        Tile* behindYou = playerPath.at(token->getPathProgress() - 1 - i);
+                        Tile* behindYou = playerPath.at(currentToken->getPathProgress() - 1 - i);
                         if (behindYou->getOccupant() &&
                             behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
                                 ++weightAndMove.first;
@@ -227,14 +234,15 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
 
             // next we check if MAKING this move will put us at risk of capture...
-            if (!wouldBeSupported) {
+            if (!wouldBeSupported && !tileMovesToken) {
                 for (int i=2; i<4; i++) {
                     try {
-                        Tile* behindYou = playerPath.at(token->getPathProgress() + 
+                        Tile* behindYou = playerPath.at(currentToken->getPathProgress() + 
                             weightAndMove.second.second - 1 - i);
                         if (behindYou->getOccupant() &&
-                            behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
-                                --weightAndMove.first;
+                            behindYou->getOccupant()->getPlayerId() != getPlayerId() && 
+                            isTileOnPlayersPath(tileAtMove->getPosition(), behindYou->getOccupant()->getPlayerId())) {
+                                weightAndMove.first -= 2;
                         }
                     } catch (out_of_range &) {
                         // no tiles to be worried about 
@@ -245,8 +253,8 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
 
             // are we disincentivized to move off of this tile? Namely, this tile is a Rosette on a shared path. 
             // slightly disincentivize this as opponent would gain invulnerability
-            if (token->getPathProgress() != 0) {
-                Tile *curTile = playerPath.at(token->getPathProgress() - 1);
+            if (currentToken->getPathProgress() != 0) {
+                Tile *curTile = playerPath.at(currentToken->getPathProgress() - 1);
                 curTile->acceptVisitor(*this);
                 if (tileId == '*') {
                     if (isTileOnSharedPath(curTile->getPosition())) {
@@ -296,7 +304,7 @@ void Level4AI::visitTileTornado(const TileTornado& t) {
         fwdWeight = 1;
     }
     for (i=index-1; i>=0; i--) {
-        if (!playerPath[i]->getOccupant()) {
+        if (!playerPath[i]->getOccupant() || playerPath[i]->getOccupant() == currentToken) { // pointer equality
             // we do not check special effects after a tornado moves you onto a special tile, so we only 
             // need to know the distance in the path
             backWeight = static_cast<float>(index-i) / static_cast<float>(playerPath.size());
@@ -335,17 +343,10 @@ void Level4AI::visitTileLucky(const TileLucky& t) {
 bool Level4AI::isTileOnSharedPath(const std::pair<size_t, size_t> &tilePosition) {
     vector<Tile*> opponentPath;
     bool tileIsInPath;
-    for (int i=0; i < allPathsOnBoard.size(); i++) {
+    for (size_t i=0; i < allPathsOnBoard.size(); i++) {
         if (i != getPlayerId()) {
             // cout << "should reach here when i = " << i << endl;
-            opponentPath = allPathsOnBoard.at(i);
-            tileIsInPath = std::find_if(opponentPath.begin(), opponentPath.end(), 
-            [tilePosition](Tile* tileInPath) {
-                // cout << tilePosition.first << tileInPath->getPosition().first << endl;
-                // cout << tilePosition.second << tileInPath->getPosition().second << endl;
-                return tilePosition.first == tileInPath->getPosition().first 
-                && tilePosition.second == tileInPath->getPosition().second; 
-            }) != opponentPath.end(); // pointer to a tile pointer
+            tileIsInPath = isTileOnPlayersPath(tilePosition, i);
 
             // cout << tileIsInPath << endl;
             if (tileIsInPath) { // we have found an opponent we can block
@@ -355,6 +356,16 @@ bool Level4AI::isTileOnSharedPath(const std::pair<size_t, size_t> &tilePosition)
         // cout << "rosette loop " << i << endl;
     }
     return false;
+}
+
+bool Level4AI::isTileOnPlayersPath(const std::pair<size_t, size_t> &tilePosition, size_t pId) {
+    // returns whether or not the tile is on this specific player's path
+    vector<Tile*> opponentPath = allPathsOnBoard.at(pId);
+    return std::find_if(opponentPath.begin(), opponentPath.end(), 
+    [tilePosition](Tile* tileInPath) {
+        return tilePosition.first == tileInPath->getPosition().first 
+        && tilePosition.second == tileInPath->getPosition().second; 
+    }) != opponentPath.end();
 }
 
 void Level4AI::visitTileRosette(const TileRosette& t) { 
