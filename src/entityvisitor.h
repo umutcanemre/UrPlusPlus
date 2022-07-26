@@ -22,9 +22,6 @@ class TokenSupporter;
 
 class EntityVisitor {
   public:
-    // virtual void visitTileStart(const TileStart&) = 0;
-    // virtual void visitTileEnd(const TileEnd&) = 0;
-
     virtual void visitTileTornado(const TileTornado&) = 0;
     virtual void visitTileBlackHole(const TileBlackHole&) = 0;
     virtual void visitTileLucky(const TileLucky&) = 0;
