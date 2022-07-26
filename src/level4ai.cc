@@ -65,7 +65,6 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
 
     // - strongly prefers using assassin to capture other tokens over using basic/others ✓
     // - prefers moves that capture other tokens ✓
-    // - prefers using supporter to support tokens
     // - prefers using abilities when it comes with a significant benefit: like claiming 
     //   a shared-path rosette to gain invulnerability early-game, or completing a path ✓
     //         -- all levels of AI sort of take this into account but this one especially with 

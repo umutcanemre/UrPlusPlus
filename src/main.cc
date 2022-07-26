@@ -31,14 +31,8 @@ int main() {
     GameState state;
     cin >> state;
 
-    Human gamer1{&cin, &cout};
-    // Human gamer2{&cin, &cout};
-    // Level1AI gamer2{};
-    // Level2AI gamer2{};
-    // Level3AI gamer2{};
-    Level4AI gamer2{};
 
-    Controller game{&state, {&gamer1, &gamer2}};
+    Controller game{&state, {gamer1.get(), gamer2.get()}};
 
     game.registerObserver(&cliview);
     game.registerObserver(&guiview);
