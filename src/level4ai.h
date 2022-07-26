@@ -31,7 +31,9 @@ class Level4AI : public AI {
     std::vector<std::vector<Tile*>> allPathsOnBoard;
     char tokenId = 'B';
     char tileId = 'O';
+    Token *currentToken = nullptr;
     bool isTileOnSharedPath(const std::pair<size_t, size_t>&);
+    bool isTileOnPlayersPath(const std::pair<size_t, size_t> &, size_t pId);
   protected:
     std::vector<std::pair<float, std::pair<size_t, size_t>>> assignPriorities(
       const std::vector<std::pair<size_t, size_t>> &, const GameState&) override;
