@@ -16,11 +16,6 @@
 CLIView::CLIView(std::ostream* out): GameViewer{}, out{out} {}
 CLIView::~CLIView() {}
 
-char CLIView::getTokenChar(const Token& t) {
-    // unwise ASCII hacking
-    return ('a' - (('0' + 1) * t.getPlayerId())) + t.getTokenId();
-}
-
 void CLIView::drawBoard(const std::vector<std::vector<Tile*>> &gameboard) {
     for (const auto &row : gameboard) {
         for (const auto &t : row) {
@@ -35,67 +30,103 @@ void CLIView::drawBoard(const std::vector<std::vector<Tile*>> &gameboard) {
     }
 }
 
-void CLIView::drawPath(const std::vector<std::vector<Tile*>> &gameboard,
-    const std::vector<Tile*> &path) const {
-
-    // is this cheese? probably not
-    std::pair<size_t, size_t> pathCoord = path[0]->getPosition();
-
-    std::vector<std::vector<char>> printBuffer(gameboard.size(),
-        std::vector<char>(gameboard[0].size(), '?'));
-
-    char dir = '!'; // garbage intial values
-    char newDir = '?';
-
-    int rowDiff = 0, colDiff = 0;
-
-    // build print buffer
-    for (size_t i = 0; i < path.size()-1; ++i) {
-        rowDiff = path[i+1]->getPosition().first - path[i]->getPosition().first;
-        colDiff = path[i+1]->getPosition().second - path[i]->getPosition().second;
-
-        if (rowDiff > 0) {
-            newDir = 'v';
-        }
-        else if (rowDiff < 0) {
-            newDir = '^';
-        }
-        else if (colDiff > 0) {
-            newDir = '>';
-        }
-        else if (colDiff < 0) {
-            newDir = '<';
-        }
-
-        if (newDir != dir) {
-            printBuffer[pathCoord.first][pathCoord.second] = newDir;
-        }
-
-        else if (dir == '>' || dir == '<') {
-            printBuffer[pathCoord.first][pathCoord.second] = '-';
-        }
-        else if (dir == 'v' || dir == '^') {
-            printBuffer[pathCoord.first][pathCoord.second] = '|';
-        }
-
-        dir = newDir;
-        // update pathCoord
-        pathCoord.first += rowDiff;
-        pathCoord.second += colDiff;
+void CLIView::processPathSegment(PathDirection curDir, PathDirection nextDir,
+        std::pair<size_t, size_t> pathCoord,
+        const size_t playerId, const size_t tilesRemaining) {
+    if (tilesRemaining == 0) {
+        printBuffer[pathCoord.first][pathCoord.second] = 'E';
     }
 
-    pathCoord = path.back()->getPosition();
-
-    printBuffer[pathCoord.first][pathCoord.second] = 'E';
-
-    // print the print buffer
-    for (const auto &row : printBuffer) {
-        for (const auto &c : row) {
-            (*out) << c;
+    else if (nextDir != curDir) {
+        char output;
+        switch (nextDir) {
+            case PathDirection::right:
+                output = '>';
+                break;
+            case PathDirection::up:
+                output = '^';
+                break;
+            case PathDirection::left:
+                output = '<';
+                break;
+            case PathDirection::down:
+                output = 'v';
+                break;
+            default:
+                break;
         }
-        (*out) << std::endl;
+        printBuffer[pathCoord.first][pathCoord.second] = output;
+    }
+
+    else if (curDir == PathDirection::right || curDir == PathDirection::left) {
+        printBuffer[pathCoord.first][pathCoord.second] = '-';
+    }
+    else if (curDir == PathDirection::down || curDir == PathDirection::up) {
+        printBuffer[pathCoord.first][pathCoord.second] = '|';
     }
 }
+
+// void CLIView::drawPath(const std::vector<std::vector<Tile*>> &gameboard,
+//     const std::vector<Tile*> &path) const {
+
+//     // is this cheese? probably not
+//     std::pair<size_t, size_t> pathCoord = path[0]->getPosition();
+
+//     std::vector<std::vector<char>> printBuffer(gameboard.size(),
+//         std::vector<char>(gameboard[0].size(), '?'));
+
+//     char dir = '!'; // garbage intial values
+//     char newDir = '?';
+
+//     int rowDiff = 0, colDiff = 0;
+
+//     // build print buffer
+//     for (size_t i = 0; i < path.size()-1; ++i) {
+//         rowDiff = path[i+1]->getPosition().first - path[i]->getPosition().first;
+//         colDiff = path[i+1]->getPosition().second - path[i]->getPosition().second;
+
+//         if (rowDiff > 0) {
+//             newDir = 'v';
+//         }
+//         else if (rowDiff < 0) {
+//             newDir = '^';
+//         }
+//         else if (colDiff > 0) {
+//             newDir = '>';
+//         }
+//         else if (colDiff < 0) {
+//             newDir = '<';
+//         }
+
+//         if (newDir != dir) {
+//             printBuffer[pathCoord.first][pathCoord.second] = newDir;
+//         }
+
+//         else if (dir == '>' || dir == '<') {
+//             printBuffer[pathCoord.first][pathCoord.second] = '-';
+//         }
+//         else if (dir == 'v' || dir == '^') {
+//             printBuffer[pathCoord.first][pathCoord.second] = '|';
+//         }
+
+//         dir = newDir;
+//         // update pathCoord
+//         pathCoord.first += rowDiff;
+//         pathCoord.second += colDiff;
+//     }
+
+//     pathCoord = path.back()->getPosition();
+
+//     printBuffer[pathCoord.first][pathCoord.second] = 'E';
+
+//     // print the print buffer
+//     for (const auto &row : printBuffer) {
+//         for (const auto &c : row) {
+//             (*out) << c;
+//         }
+//         (*out) << std::endl;
+//     }
+// }
 
 void CLIView::drawInfoTokens(const std::vector<std::vector<Token*>>& playersTokens,
     const std::string &info,
@@ -107,6 +138,15 @@ void CLIView::drawInfoTokens(const std::vector<std::vector<Token*>>& playersToke
             if (pred(t)) {
                 (*out) << getTokenChar(*t) << ' ';
             }
+        }
+        (*out) << std::endl;
+    }
+}
+
+void CLIView::outputPrintBuffer() const {
+    for (const auto &row : printBuffer) {
+        for (const auto &c : row) {
+            (*out) << c;
         }
         (*out) << std::endl;
     }
@@ -131,10 +171,6 @@ void CLIView::doNotify(const GameState& g) {
 
     // abilities available print
     // ...
-
-
-
-
 
     drawInfoTokens(g.getPlayersTokens(),
         "game",
@@ -164,8 +200,12 @@ void CLIView::doNotify(const GameState& g) {
 
     // print player paths
     for  (size_t i = 0; i < g.getPlayersPaths().size(); ++i) {
+        printBuffer = std::vector<std::vector<char>>(g.getBoard().size(),
+            std::vector<char>(g.getBoard()[0].size(), '?'));
+
         (*out) << "Player " << i << " game path:" << std::endl;
-        drawPath(g.getBoard(), g.getPlayersPaths()[i]);
+        drawPath(g.getBoard(), g.getPlayersPaths()[i], i);
+        outputPrintBuffer();
     }
 }
 

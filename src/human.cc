@@ -17,7 +17,9 @@ size_t Human::charToTokenId(char c) {
 }
 
 Human::~Human() {}
-Human::Human(istream *in, ostream *out): Player{}, in{in}, out{out} {}
+Human::Human(istream *in, ostream *out): Player{}, in{in}, out{out} {
+    (*in).exceptions(ios::eofbit|ios::failbit);
+}
 
 void Human::skipTurn(GameState& gameState) const {
     string cmd;
