@@ -32,7 +32,7 @@ int main() {
     cin >> state;
 
 
-    Controller game{&state, {gamer1.get(), gamer2.get()}};
+    Controller game{&state, {&gamer1, &gamer2}};
 
     game.registerObserver(&cliview);
     game.registerObserver(&guiview);

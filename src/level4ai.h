@@ -24,9 +24,6 @@ class TokenSupporter;
 
 
 class Level4AI : public AI {
-    // bool tileRollsDice = false;
-    // bool tileRepeatsTurn = false;
-    // bool tileGrantsInvulnerability = false;
     float tileAvgMoveDist = 0;
     std::vector<std::vector<Tile*>> allPathsOnBoard;
     char tokenId = 'B';

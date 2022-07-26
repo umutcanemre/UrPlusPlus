@@ -30,7 +30,7 @@ class AIMadeInvalidMoveException : public std::exception {
     const char *what();
 };
 
-class AI : public Player, public EntityVisitor {
+class AI : public virtual Player, public virtual EntityVisitor {
     float visitedTileScore = 0;
     float visitedTokenScore = 0;
 
