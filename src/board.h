@@ -7,8 +7,9 @@
 #include "tile.h"
 
 class BoardParseException : public std::exception {
+    const std::string message = "Board parsing error";
   public:
-    char *what();
+    const char *what();
 };
 
 class Board {
@@ -33,7 +34,7 @@ class Board {
     const std::vector<std::vector<Tile*>>& getPlayersPaths() const;
 
     friend std::istream& operator>>(std::istream&, Board&);
-    
+
     // Mainly for GameState makeMove; maybe fix? should be ok though
     friend class GameState;
 };

@@ -35,17 +35,6 @@ void GameViewer::drawPath(const std::vector<std::vector<Tile*>> &gameboard,
 
         processPathSegment(dir, newDir, pathCoord, playerId, path.size() - (i+1));
 
-        // if (newDir != dir) {
-        //     printBuffer[pathCoord.first][pathCoord.second] = newDir;
-        // }
-
-        // else if (dir == '>' || dir == '<') {
-        //     printBuffer[pathCoord.first][pathCoord.second] = '-';
-        // }
-        // else if (dir == 'v' || dir == '^') {
-        //     printBuffer[pathCoord.first][pathCoord.second] = '|';
-        // }
-
         dir = newDir;
         // update pathCoord
         pathCoord.first += rowDiff;
@@ -55,21 +44,12 @@ void GameViewer::drawPath(const std::vector<std::vector<Tile*>> &gameboard,
     pathCoord = path.back()->getPosition();
 
     processPathSegment(dir, newDir, pathCoord, playerId, 0);
-
-    // printBuffer[pathCoord.first][pathCoord.second] = 'E';
-
-    // print the print buffer
-    // for (const auto &row : printBuffer) {
-    //     for (const auto &c : row) {
-    //         (*out) << c;
-    //     }
-    //     (*out) << std::endl;
-    // }
 }
 
 char GameViewer::getTokenChar(const Token& t) {
     // unwise ASCII hacking
     return ('a' - (('0' + 1) * t.getPlayerId())) + t.getTokenId();
 }
+
 
 GameViewer::~GameViewer() {}

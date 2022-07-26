@@ -22,8 +22,8 @@
 
 using namespace std;
 
-char* AIMadeInvalidMoveException::what() {
-    return "Uh oh!";
+const char* AIMadeInvalidMoveException::what() {
+    return message.c_str();
 }
 
 AI::~AI() {}
@@ -31,7 +31,7 @@ AI::AI() : Player() {}
 
 void AI::determineAndMakeMove(GameState &gameState) {
     // pre: there exists at least one valid move this turn
-    pair<size_t, size_t> move = findMove(gameState); // returns a tokenID and a distance 
+    pair<size_t, size_t> move = findMove(gameState); // returns a tokenID and a distance
 
     if (!gameState.movePiece(move.first, move.second)) {
         throw AIMadeInvalidMoveException{};
@@ -58,11 +58,11 @@ vector<pair<size_t, size_t>> AI::findAllValidMoves(const GameState& gameState) c
     size_t diceRoll = gameState.getDiceRoll();
     size_t flexRoll = gameState.getFlexDiceRoll();
 
-    
+
     for (const auto &x : myTokens) {
         vector<size_t> movesOfX = x->getValidMoveDistances(diceRoll, flexRoll);
         for (const auto &y : movesOfX) {
-            if (gameState.moveValid(x->getTokenId(), y) && 
+            if (gameState.moveValid(x->getTokenId(), y) &&
                     moveIsNotRepeated(validMoves, x->getTokenId(), y)) {
                 validMoves.emplace_back(make_pair(x->getTokenId(), y));
             }
@@ -80,7 +80,7 @@ bool AI::moveIsNotRepeated(const vector<pair<size_t, size_t>> &validMoves, size_
             }) == validMoves.end());
 }
 
-vector<pair<int, pair<size_t, size_t>>> AI::assignPriorities( 
+vector<pair<int, pair<size_t, size_t>>> AI::assignPriorities(
     const vector<pair<size_t, size_t>> &movelist, const GameState &gameState) {
     // Level 1 and Default AI implementation: an AI that randomly chooses a move that is valid with no preference
     // no priorities are needed to be assigned
@@ -97,7 +97,7 @@ int AI::getTokenScore() const { return visitedTokenScore; }
 void AI::setTileScore(int v) { visitedTileScore = v; }
 int AI::getTileScore() const { return visitedTileScore; }
 
-// default visitor implementations - do nothing 
+// default visitor implementations - do nothing
 void AI::visitTileTornado(const TileTornado&) {}
 void AI::visitTileBlackHole(const TileBlackHole&) {}
 void AI::visitTileLucky(const TileLucky&) {}

@@ -6,13 +6,15 @@
 #include <vector>
 
 class InvalidGameStateOperation : public std::exception {
+  const std::string message = "Illegal Operation";
   public:
-    char *what();
+    const char *what();
 };
 
 class InvalidWinnerException : public std::exception {
+  const std::string message = "No winner exists yet";
   public:
-    char *what();
+    const char *what();
 };
 
 
