@@ -6,7 +6,7 @@ OBJECTS = ai.o board.o cliview.o controller.o entityvisitor.o gamestate.o gamevi
 	player.o tilebasic.o tileblackhole.o tile.o tilelucky.o \
 	tilenull.o tilerosette.o tiletornado.o tokenassassin.o \
 	tokenbasic.o token.o tokenflexible.o tokenspeedster.o tokensupporter.o \
-	sdl_wrap.o gameobserver.o main.o
+	sdl_wrap.o gameobserver.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}

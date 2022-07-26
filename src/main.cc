@@ -21,10 +21,19 @@ using namespace std;
 SDL_Runner r;
 
 int main() {
+    const string usageMsg = "Usage: [-AI <AI level>] [-AI <AI level>] [--guienable]";
     Screen s{640,640};
     CLIView cliview{&cout};
 
     GUIView guiview{&s};
+
+    // make the players
+    Human gamer1{&cin, &cout};
+    // Human gamer2{&cin, &cout};
+    // Level1AI gamer2{};
+    // Level2AI gamer2{};
+    // Level3AI gamer2{};
+    Level4AI gamer2{};
 
 
     // read in the game state
