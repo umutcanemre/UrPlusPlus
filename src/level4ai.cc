@@ -71,7 +71,8 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     // 6. Avoid moves that land on black holes. -6 ✓
 
 
-    // 7. Penalizes moves that land on a tile 2 or 3 ahead of an enemy token without protection (-2 each) ✓
+    // 7. Penalizes moves that land on a tile 1, 2 or 3 ahead of an enemy token without protection 
+    //      (-2 each, -3 for distance 2) ✓
     // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation() ✓
     // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation() ✓
 
@@ -158,11 +159,12 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                             continue;
                         }
                         if (behindYou->getOccupant() && tokenId == 'G' &&
-                            behindYou->getOccupant()->getPlayerId() == getPlayerId()) {
+                            behindYou->getOccupant()->getPlayerId() == getPlayerId() &&
+                            behindYou->getOccupant()->getTokenId() != currentToken->getTokenId()) // make sure guardian doesn't check itself
+                            { 
                             // check if guardian guards you
                             Token* guardian = behindYou->getOccupant();
-                            // why does it seem to think my assassin is the guardian?
-                            int j;
+                            int j = 0;
                             for (j=1;j<i;j++) { // only need to check the i positions in front of it for occupation
                                 try {
                                     playerPath.at(guardian->getPathProgress() - 1 + j);
@@ -172,6 +174,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                                         // if anyone that is at an index closer to the Guardian than you are
                                         // has your playerID, they would be supported instead
                                             wouldBeSupported = false;
+                                            break;
                                         }
                                 } catch (out_of_range &) {
                                     break;
@@ -204,16 +207,22 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
 
             // Would NOT making this move put us at risk of capture?
-            // the opponent is most likely to roll a 2 or 3 - this accounts for 7/8 cases.
-            // so we check tiles at pathProgress - 1 -2 and pathProgress - 1 -3.
-            // if one of them (or both of them) are occupied and you are not supported
+            // the opponent is most likely to roll a 1 2 or 3 - this accounts for 7/8 cases, with 2 
+            // accounting for most of that.
+            // if one (or more) of these squares are occupied and you are not supported, we slightly 
+            // incentivize moving off the current square.
             if (!currentlySupported) {
-                for (int i=2; i<4; i++) {
+                for (int i=1; i<4; i++) {
                     try {
                         Tile* behindYou = playerPath.at(currentToken->getPathProgress() - 1 - i);
-                        if (behindYou->getOccupant() &&
+                        if (behindYou->getOccupant() && 
                             behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
-                                ++weightAndMove.first;
+                            if (i == 2 && // incentivize more if 2
+                                isTileOnPlayersPath(tileAtMove->getPosition(), 
+                                behindYou->getOccupant()->getPlayerId())) {  
+                                    ++weightAndMove.first;
+                            }
+                            weightAndMove.first += 2;
                         }
                     } catch (out_of_range &) {
                         // no more tiles to be worried about
@@ -224,14 +233,17 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
 
             // next we check if MAKING this move will put us at risk of capture...
             if (!wouldBeSupported && !tileMovesToken) {
-                for (int i=2; i<4; i++) {
+                for (int i=1; i<4; i++) {
                     try {
                         Tile* behindYou = playerPath.at(currentToken->getPathProgress() +
                             weightAndMove.second.second - 1 - i);
-                        if (behindYou->getOccupant() &&
-                            behindYou->getOccupant()->getPlayerId() != getPlayerId() &&
-                            isTileOnPlayersPath(tileAtMove->getPosition(), behindYou->getOccupant()->getPlayerId())) {
-                                weightAndMove.first -= 2;
+                        if (behindYou->getOccupant() && behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
+                            if (i == 2 && // disincentivize more if 2
+                                isTileOnPlayersPath(tileAtMove->getPosition(), 
+                                behindYou->getOccupant()->getPlayerId())) {
+                                    --weightAndMove.first;
+                            }
+                            weightAndMove.first -= 2;
                         }
                     } catch (out_of_range &) {
                         // no more tiles to be worried about
@@ -257,8 +269,8 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
         }
         // if you want to view the weights and all possible moves:
-        // cout << "Weight " << weightAndMove.first << ": Token " << weightAndMove.second.first
-        //     << ", distance " << weightAndMove.second.second << endl;
+        cout << "Weight " << weightAndMove.first << ": Token " << weightAndMove.second.first
+            << ", distance " << weightAndMove.second.second << endl;
     }
     return weightMovePairs;
 
