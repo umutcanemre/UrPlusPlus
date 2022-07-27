@@ -40,10 +40,7 @@ pair<size_t, size_t> Level4AI::findMove(const GameState &gameState) {
         }
     )->first;
 
-    // if there are multiple moves with the same weight I should randomly generate which move to pick,
-    // because I do not want it to pick the first one in order every single time - it would just end
-    // up moving the same token every time when there are multiple of the same weight and random
-    // would be strategically better in this case than predictable
+    // pick randomly if multiple moves are weighted the same
     vector<pair<float, pair<size_t, size_t>>> candidates;
     for (auto x: weightedMovelist) {
         if (maxWeight == x.first) {
@@ -61,19 +58,19 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     // of using abilities at the right times.
 
     // This is the order of preference: (highest to lowest priority)
-    // 1. Most strongly favours moves that end the current token's run. +6 ✓
-    // 2. Favour moves that land on a rosette on a shared path (+5) and rosettes (+3). ✓
+    // 1. Most strongly favours moves that end the current token's run. +6
+    // 2. Favour moves that land on a rosette on a shared path (+5) and rosettes (+3).
     // 3. Favour moves that steal someone else’s token. +S where S = x + y, x is
-    //    token tastiness and y is capture ability modifier ✓
+    //    token tastiness and y is capture ability modifier
     // 4. Favours moves that end up protecting a special token, slightly favours moves that
-    //    protect a normal token (+3, +2) ✓
-    // 5. Slightly penalizes moves that end up losing protection by rosette or supporter (-1) ✓
-    // 6. Avoid moves that land on black holes. -6 ✓
+    //    protect a normal token (+3, +2)
+    // 5. Slightly penalizes moves that end up losing protection by rosette or supporter (-1)
+    // 6. Avoid moves that land on black holes. -6
 
 
-    // 7. Penalizes moves that land on a tile 2 or 3 ahead of an enemy token without protection (-2 each) ✓
-    // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation() ✓
-    // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation() ✓
+    // 7. Penalizes moves that land on a tile 2 or 3 ahead of an enemy token without protection (-2 each)
+    // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation()
+    // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation()
 
     vector<pair<float, pair<size_t, size_t>>> weightMovePairs;
     allPathsOnBoard = gameState.getPlayersPaths();
@@ -101,19 +98,19 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                 currentTile = playerPath.at(currentToken->getPathProgress() - 1);
             }
             else {currentTile = nullptr;}
-            // next, check the tile at the next move and see how incentivized we are to move to that tile
+            // check the tile at the next move and see how incentivized we are to move to that tile
             tileAtMove->acceptVisitor(*this);
-            weightAndMove.first += getTileScore(); // should account for all of Rosette, Lucky, BH, and Tornado
-            // next, see if the tile has an occupant - how incentivized are we to get the occupant?
-
+            weightAndMove.first += getTileScore(); // accounts for all of Rosette, Lucky, BH, and Tornado
+            
+            // check for capture incentives
             if (tileAtMove->getOccupant()) {
                 Token *occupant = tileAtMove->getOccupant();
                 vector<Tile*> opponentPath = allPathsOnBoard.at(occupant->getPlayerId());
                 occupant->acceptVisitor(*this);
-                weightAndMove.first += getTokenScore(); // accounts for all of
+                weightAndMove.first += getTokenScore();
 
-                // do we get any benefits from getting the occupant?
-                if (currentToken->activateCapture()) { // if has capture ability
+                // Add to weight if has capture ability
+                if (currentToken->activateCapture()) { 
                     weightAndMove.first += 2;
                 }
             }
