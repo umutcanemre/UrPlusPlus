@@ -7,23 +7,24 @@ void TokenSupporter::passiveAbility(std::vector<Tile*>& path) {
     if (isProtecting) {
         isProtecting->setIsProtected(false);
     }
-
-    // find the next tile to protect
-    for (size_t i=1; i<4; i++) {
-        try {
-            Token * t = path.at(i + getPathProgress() - 1)->getOccupant();
-            if (t && t->getPlayerId() == getPlayerId()) { 
-                // if found add isProtected status to it
-                isProtecting = t;
-                isProtecting->setIsProtected(true);
-                return;
+    if (getPathProgress() != 0) {
+        // find the next tile to protect
+        for (size_t i=1; i<4; i++) {
+            try {
+                Token * t = path.at(i + getPathProgress() - 1)->getOccupant();
+                if (t && t->getPlayerId() == getPlayerId()) { 
+                    // if found add isProtected status to it
+                    isProtecting = t;
+                    isProtecting->setIsProtected(true);
+                    return;
+                }
+            } catch (std::out_of_range &) {
+                isProtecting = nullptr;
+                return; // no tokens to protect before end of path
             }
-        } catch (std::out_of_range &) {
-            isProtecting = nullptr;
-            return; // no tokens to protect before end of path
         }
     }
-
+    
     // no tokens were found
     isProtecting = nullptr;
 }

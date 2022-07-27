@@ -19,9 +19,7 @@ void GameState::recalculatePassive() {
     for (size_t i = 0; i < board->playerCount; ++i) {
         for (size_t j = 0; j < board->playersTokens.at(playerTurn).size(); ++j) {
             Token* t = board->playersTokens.at(i).at(j).get();
-            if (t->getPathProgress() != 0) {
-                board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
-            }
+            board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(playerTurn));
         }
     }
 }
