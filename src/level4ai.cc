@@ -116,14 +116,15 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
 
 
-            // after doing that, we need to consider some other cases as to what will happen.
-            // after the tile lands on a tornado or black hole none of this is relevant as it will be sent to a
-            // new location anyway.
+
 
             // Would making this move most likely put us at risk of capture?
             // and if isAtRisk, how much do we care about this token?
             // however this is completely negated if one of the occupants behind you is the supporter or if you
             // are currently not on anything
+
+            // After the tile lands on a tornado or black hole none of this is relevant as it will be sent to a
+            // new location anyway.
             bool currentlySupported = false;
             if (currentTile) {
                 currentTile->acceptVisitor(*this);
@@ -158,7 +159,6 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                             behindYou->getOccupant()->getPlayerId() == getPlayerId()) {
                             // check if guardian guards you
                             Token* guardian = behindYou->getOccupant();
-                            // why does it seem to think my assassin is the guardian?
                             int j;
                             for (j=1;j<i;j++) { // only need to check the i positions in front of it for occupation
                                 try {
