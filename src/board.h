@@ -35,7 +35,6 @@ class Board {
 
     friend std::istream& operator>>(std::istream&, Board&);
 
-    // Mainly for GameState makeMove; maybe fix? should be ok though
     friend class GameState;
 };
 
