@@ -12,7 +12,7 @@ Screen::Screen(int w, int h, std::string screenName) :
         window{SDL_CreateWindow(screenName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN)},
         render{SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED)},
         w{w}, h{h}, screenName{screenName},  rects{} {
-  fonts["COMICSANS"] = TTF_OpenFont("../assets/IHATCS__.ttf", 28);
+  fonts["COMICSANS"] = TTF_OpenFont("assets/IHATCS__.ttf", 28);
   if (render == NULL) {
     cerr << "Couldn't load renderer " << SDL_GetError() << endl;
   }

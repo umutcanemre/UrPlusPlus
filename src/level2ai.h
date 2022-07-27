@@ -26,4 +26,4 @@ class Level2AI : public AI {
     ~Level2AI();
 };
 
-#endif 
+#endif

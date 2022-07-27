@@ -34,4 +34,4 @@ class Level3AI : public AI {
     ~Level3AI();
 };
 
-#endif 
+#endif

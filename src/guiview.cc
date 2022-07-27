@@ -275,56 +275,56 @@ void GUIView::visitTokenSupporter(const TokenSupporter& t) {
 GUIView::GUIView(Screen* s): GameViewer{}, screen{s},
     boardStartX{} {
     // background
-    s->add_img("bg", "../assets/bg.png");
+    s->add_img("bg", "assets/bg.png");
 
     // misc
-    s->add_img("protected", "../assets/protected.png");
+    s->add_img("protected", "assets/protected.png");
 
     // tiles
-    s->add_img("tilebasic", "../assets/tilebasic.png");
-    s->add_img("tilelucky", "../assets/tilelucky.png");
-    s->add_img("tileblackhole", "../assets/tileblackhole.png");
-    s->add_img("tilerosette", "../assets/tilerosette.png");
-    s->add_img("tiletornado", "../assets/tiletornado.png");
-    s->add_img("tilenull", "../assets/tilenull.png");
+    s->add_img("tilebasic", "assets/tilebasic.png");
+    s->add_img("tilelucky", "assets/tilelucky.png");
+    s->add_img("tileblackhole", "assets/tileblackhole.png");
+    s->add_img("tilerosette", "assets/tilerosette.png");
+    s->add_img("tiletornado", "assets/tiletornado.png");
+    s->add_img("tilenull", "assets/tilenull.png");
 
     // tokens
-    s->add_img("tokenassassin0", "../assets/tokenassassin0.png");
-    s->add_img("tokenbasic0", "../assets/tokenbasic0.png");
-    s->add_img("tokenspeedsterslow0", "../assets/tokenspeedsterslow0.png");
-    s->add_img("tokenspeedsterfast0", "../assets/tokenspeedsterfast0.png");
-    s->add_img("tokensupporter0", "../assets/tokensupporter0.png");
-    s->add_img("tokenflexible0", "../assets/tokenflexible0.png");
+    s->add_img("tokenassassin0", "assets/tokenassassin0.png");
+    s->add_img("tokenbasic0", "assets/tokenbasichm0.png");
+    s->add_img("tokenspeedsterslow0", "assets/tokenspeedsterslow0.png");
+    s->add_img("tokenspeedsterfast0", "assets/tokenspeedsterfast0.png");
+    s->add_img("tokensupporter0", "assets/tokensupporter0.png");
+    s->add_img("tokenflexible0", "assets/tokenflexible0.png");
 
-    s->add_img("tokenassassin1", "../assets/tokenassassin1.png");
-    s->add_img("tokenbasic1", "../assets/tokenbasic1.png");
-    s->add_img("tokenspeedsterslow1", "../assets/tokenspeedsterslow1.png");
-    s->add_img("tokenspeedsterfast1", "../assets/tokenspeedsterfast1.png");
-    s->add_img("tokensupporter1", "../assets/tokensupporter1.png");
-    s->add_img("tokenflexible1", "../assets/tokenflexible1.png");
+    s->add_img("tokenassassin1", "assets/tokenassassin1.png");
+    s->add_img("tokenbasic1", "assets/tokenbasichm1.png");
+    s->add_img("tokenspeedsterslow1", "assets/tokenspeedsterslow1.png");
+    s->add_img("tokenspeedsterfast1", "assets/tokenspeedsterfast1.png");
+    s->add_img("tokensupporter1", "assets/tokensupporter1.png");
+    s->add_img("tokenflexible1", "assets/tokenflexible1.png");
 
     // paths
-    s->add_img("da1", "../assets/path/da1.png");
-    s->add_img("dl1", "../assets/path/dl1.png");
-    s->add_img("dr1", "../assets/path/dr1.png");
-    s->add_img("horz1", "../assets/path/horz1.png");
-    s->add_img("la1", "../assets/path/la1.png");
-    s->add_img("ra1", "../assets/path/ra1.png");
-    s->add_img("ua1", "../assets/path/ua1.png");
-    s->add_img("ul1", "../assets/path/ul1.png");
-    s->add_img("ur1", "../assets/path/ur1.png");
-    s->add_img("vert1", "../assets/path/vert1.png");
+    s->add_img("da1", "assets/path/da1.png");
+    s->add_img("dl1", "assets/path/dl1.png");
+    s->add_img("dr1", "assets/path/dr1.png");
+    s->add_img("horz1", "assets/path/horz1.png");
+    s->add_img("la1", "assets/path/la1.png");
+    s->add_img("ra1", "assets/path/ra1.png");
+    s->add_img("ua1", "assets/path/ua1.png");
+    s->add_img("ul1", "assets/path/ul1.png");
+    s->add_img("ur1", "assets/path/ur1.png");
+    s->add_img("vert1", "assets/path/vert1.png");
 
-    s->add_img("da0", "../assets/path/da0.png");
-    s->add_img("dl0", "../assets/path/dl0.png");
-    s->add_img("dr0", "../assets/path/dr0.png");
-    s->add_img("horz0", "../assets/path/horz0.png");
-    s->add_img("la0", "../assets/path/la0.png");
-    s->add_img("ra0", "../assets/path/ra0.png");
-    s->add_img("ua0", "../assets/path/ua0.png");
-    s->add_img("ul0", "../assets/path/ul0.png");
-    s->add_img("ur0", "../assets/path/ur0.png");
-    s->add_img("vert0", "../assets/path/vert0.png");
+    s->add_img("da0", "assets/path/da0.png");
+    s->add_img("dl0", "assets/path/dl0.png");
+    s->add_img("dr0", "assets/path/dr0.png");
+    s->add_img("horz0", "assets/path/horz0.png");
+    s->add_img("la0", "assets/path/la0.png");
+    s->add_img("ra0", "assets/path/ra0.png");
+    s->add_img("ua0", "assets/path/ua0.png");
+    s->add_img("ul0", "assets/path/ul0.png");
+    s->add_img("ur0", "assets/path/ur0.png");
+    s->add_img("vert0", "assets/path/vert0.png");
 }
 
 GUIView::~GUIView() {}
