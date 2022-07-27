@@ -66,18 +66,10 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     //    protect a normal token (+3, +2)
     // 5. Slightly penalizes moves that end up losing protection by rosette or supporter (-1)
     // 6. Avoid moves that land on black holes. -6
-
-
-<<<<<<< HEAD
     // 7. Penalizes moves that land on a tile 1, 2 or 3 ahead of an enemy token without protection 
     //      (-2 each, -3 for distance 2) ✓
     // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation() ✓
     // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation() ✓
-=======
-    // 7. Penalizes moves that land on a tile 2 or 3 ahead of an enemy token without protection (-2 each)
-    // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation()
-    // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation()
->>>>>>> 5a4f365d60f6338f8e1862c5a4c63e76e2c6e55b
 
     vector<pair<float, pair<size_t, size_t>>> weightMovePairs;
     allPathsOnBoard = gameState.getPlayersPaths();
@@ -168,11 +160,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                             { 
                             // check if guardian guards you
                             Token* guardian = behindYou->getOccupant();
-<<<<<<< HEAD
                             int j = 0;
-=======
-                            int j;
->>>>>>> 5a4f365d60f6338f8e1862c5a4c63e76e2c6e55b
                             for (j=1;j<i;j++) { // only need to check the i positions in front of it for occupation
                                 try {
                                     playerPath.at(guardian->getPathProgress() - 1 + j);
@@ -277,8 +265,8 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
         }
         // if you want to view the weights and all possible moves:
-        cout << "Weight " << weightAndMove.first << ": Token " << weightAndMove.second.first
-            << ", distance " << weightAndMove.second.second << endl;
+        // cout << "Weight " << weightAndMove.first << ": Token " << weightAndMove.second.first
+        //     << ", distance " << weightAndMove.second.second << endl;
     }
     return weightMovePairs;
 
