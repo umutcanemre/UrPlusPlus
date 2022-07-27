@@ -18,7 +18,6 @@ void GameState::recalculatePassive() {
     // This is necessasry in the case we start on an opposite player's turn
     for (size_t i = 0; i < board->playerCount; ++i) {
         for (size_t j = 0; j < board->playersTokens.at(playerTurn).size(); ++j) {
-            Token* t = board->playersTokens.at(i).at(j).get();
             board->playersTokens.at(i).at(j)->activatePassive(board->paths.at(i));
         }
     }
