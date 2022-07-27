@@ -40,7 +40,10 @@ pair<size_t, size_t> Level4AI::findMove(const GameState &gameState) {
         }
     )->first;
 
-    // pick randomly if multiple moves are weighted the same
+    // if there are multiple moves with the same weight I should randomly generate which move to pick,
+    // because I do not want it to pick the first one in order every single time - it would just end
+    // up moving the same token every time when there are multiple of the same weight and random
+    // would be strategically better in this case than predictable
     vector<pair<float, pair<size_t, size_t>>> candidates;
     for (auto x: weightedMovelist) {
         if (maxWeight == x.first) {
@@ -58,15 +61,15 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
     // of using abilities at the right times.
 
     // This is the order of preference: (highest to lowest priority)
-    // 1. Most strongly favours moves that end the current token's run. +6
-    // 2. Favour moves that land on a rosette on a shared path (+5) and rosettes (+3).
+    // 1. Most strongly favours moves that end the current token's run. +6 ✓
+    // 2. Favour moves that land on a rosette on a shared path (+5) and rosettes (+3). ✓
     // 3. Favour moves that steal someone else’s token. +S where S = x + y, x is
-    //    token tastiness and y is capture ability modifier
+    //    token tastiness and y is capture ability modifier ✓
     // 4. Favours moves that end up protecting a special token, slightly favours moves that
     //    protect a normal token (+3, +2)
     // 5. Slightly penalizes moves that end up losing protection by rosette or supporter (-1)
     // 6. Avoid moves that land on black holes. -6
-    // 7. Penalizes moves that land on a tile 1, 2 or 3 ahead of an enemy token without protection 
+    // 7. Penalizes moves that land on a tile 1, 2 or 3 ahead of an enemy token without protection
     //      (-2 each, -3 for distance 2) ✓
     // 8. if pathProgress + distance - 1 = lucky, +luckyDistanceCalculation() ✓
     // 9. if pathProgress + distance - 1 = tornado, +tornadoDistanceCalculation() ✓
@@ -97,33 +100,32 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                 currentTile = playerPath.at(currentToken->getPathProgress() - 1);
             }
             else {currentTile = nullptr;}
-            // check the tile at the next move and see how incentivized we are to move to that tile
+            // next, check the tile at the next move and see how incentivized we are to move to that tile
             tileAtMove->acceptVisitor(*this);
-            weightAndMove.first += getTileScore(); // accounts for all of Rosette, Lucky, BH, and Tornado
-            
-            // check for capture incentives
+            weightAndMove.first += getTileScore(); // should account for all of Rosette, Lucky, BH, and Tornado
+            // next, see if the tile has an occupant - how incentivized are we to get the occupant?
+
             if (tileAtMove->getOccupant()) {
                 Token *occupant = tileAtMove->getOccupant();
                 vector<Tile*> opponentPath = allPathsOnBoard.at(occupant->getPlayerId());
                 occupant->acceptVisitor(*this);
-                weightAndMove.first += getTokenScore();
+                weightAndMove.first += getTokenScore(); // accounts for all of
 
-                // Add to weight if has capture ability
-                if (currentToken->activateCapture()) { 
+                // do we get any benefits from getting the occupant?
+                if (currentToken->activateCapture()) { // if has capture ability
                     weightAndMove.first += 2;
                 }
             }
 
 
-
+            // after doing that, we need to consider some other cases as to what will happen.
+            // after the tile lands on a tornado or black hole none of this is relevant as it will be sent to a
+            // new location anyway.
 
             // Would making this move most likely put us at risk of capture?
             // and if isAtRisk, how much do we care about this token?
             // however this is completely negated if one of the occupants behind you is the supporter or if you
             // are currently not on anything
-
-            // After the tile lands on a tornado or black hole none of this is relevant as it will be sent to a
-            // new location anyway.
             bool currentlySupported = false;
             if (currentTile) {
                 currentTile->acceptVisitor(*this);
@@ -157,7 +159,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                         if (behindYou->getOccupant() && tokenId == 'G' &&
                             behindYou->getOccupant()->getPlayerId() == getPlayerId() &&
                             behindYou->getOccupant()->getTokenId() != currentToken->getTokenId()) // make sure guardian doesn't check itself
-                            { 
+                            {
                             // check if guardian guards you
                             Token* guardian = behindYou->getOccupant();
                             int j = 0;
@@ -203,19 +205,19 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
             }
 
             // Would NOT making this move put us at risk of capture?
-            // the opponent is most likely to roll a 1 2 or 3 - this accounts for 7/8 cases, with 2 
+            // the opponent is most likely to roll a 1 2 or 3 - this accounts for 7/8 cases, with 2
             // accounting for most of that.
-            // if one (or more) of these squares are occupied and you are not supported, we slightly 
+            // if one (or more) of these squares are occupied and you are not supported, we slightly
             // incentivize moving off the current square.
             if (!currentlySupported) {
                 for (int i=1; i<4; i++) {
                     try {
                         Tile* behindYou = playerPath.at(currentToken->getPathProgress() - 1 - i);
-                        if (behindYou->getOccupant() && 
+                        if (behindYou->getOccupant() &&
                             behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
                             if (i == 2 && // incentivize more if 2
-                                isTileOnPlayersPath(tileAtMove->getPosition(), 
-                                behindYou->getOccupant()->getPlayerId())) {  
+                                isTileOnPlayersPath(tileAtMove->getPosition(),
+                                behindYou->getOccupant()->getPlayerId())) {
                                     ++weightAndMove.first;
                             }
                             weightAndMove.first += 2;
@@ -235,7 +237,7 @@ vector<pair<float, pair<size_t, size_t>>> Level4AI::assignPriorities(
                             weightAndMove.second.second - 1 - i);
                         if (behindYou->getOccupant() && behindYou->getOccupant()->getPlayerId() != getPlayerId()) {
                             if (i == 2 && // disincentivize more if 2
-                                isTileOnPlayersPath(tileAtMove->getPosition(), 
+                                isTileOnPlayersPath(tileAtMove->getPosition(),
                                 behindYou->getOccupant()->getPlayerId())) {
                                     --weightAndMove.first;
                             }
